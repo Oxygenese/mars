@@ -1,0 +1,20 @@
+server:
+  name: mars.sys.service
+  version: 1.0.0
+  http:
+    addr: 0.0.0.0:8004
+    timeout: 2s
+  grpc:
+    addr: 0.0.0.0:9004
+    timeout: 1s
+data:
+  database:
+    driver: mysql
+    source: root:970312@tcp(mysql:3306)/mars?parseTime=true&charset=utf8mb4&parseTime=True&loc=Local
+    migrate: true
+  redis:
+    addr: 127.0.0.1:6379
+    read_timeout: 0.2s
+    write_timeout: 0.2s
+    password: "970312"
+    db: 1

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package kratos.api;
+
+import "google/protobuf/duration.proto";
+
+option go_package = "compute-service/internal/conf;conf";
+
+message Bootstrap {
+    Trace trace = 1;
+    Server server = 2;
+    Data data = 3;
+    Auth auth = 4;
+    Client client = 5;
+    Queue queue = 6;
+}
+
+message Trace {
+    string endpoint = 1;
+}
+
+message Client {
+    string sys = 1;
+    string master = 2;
+    string computer = 3;
+}
+
+message Server {
+    message HTTP {
+        string network = 1;
+        string addr = 2;
+        google.protobuf.Duration timeout = 3;
+    }
+    message GRPC {
+        string network = 1;
+        string addr = 2;
+        google.protobuf.Duration timeout = 3;
+    }
+    HTTP http = 1;
+    GRPC grpc = 2;
+    string name = 3;
+    string version = 4;
+}
+
+message Data {
+    message Database {
+        string driver = 1;
+        string source = 2;
+        bool migrate = 3;
+        bool debug = 4;
+    }
+    message Redis {
+        string network = 1;
+        string addr = 2;
+        string password = 3;
+        uint32 db = 4;
+        google.protobuf.Duration read_timeout = 5;
+        google.protobuf.Duration write_timeout = 6;
+    }
+    Database database = 1;
+    Redis redis = 2;
+}
+
+message Registry {
+    message Nacos {
+        string address = 1;
+        uint64 port = 2;
+    }
+    Nacos nacos = 1;
+}
+
+message Auth {
+    int64 access_expired = 1;
+    int64 refresh_expired = 2;
+    string client_id = 3;
+    string client_secret = 4;
+}
+
+message Queue {
+    message Nsq {
+        repeated string addresses = 1;
+        string prefix = 2;
+    }
+    message Amqp {
+        string uri = 1;
+    }
+    Nsq nsq = 1;
+    Amqp amqp = 2;
+}

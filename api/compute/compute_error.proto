@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package v1;
+import "errors/errors.proto";
+option go_package = "github.com/mars-projects/mars/api/compute;compute";
+option java_multiple_files = true;
+
+enum DomainAlreadyExisted {
+  option (errors.default_code) = 409;
+  DOMAIN_ALREADY_EXISTED = 0;
+}
+
+
