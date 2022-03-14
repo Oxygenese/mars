@@ -15,8 +15,6 @@ services:
     depends_on:
       - mysql
     restart: always
-    networks:
-      - mars
 
   mysql:
     container_name: mysql
@@ -28,8 +26,6 @@ services:
       - /Users/zgh/data/mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
-    networks:
-      - mars
 
   apisix-dashboard:
     container_name: apisix-dashboard
@@ -39,8 +35,6 @@ services:
       - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
     ports:
       - "9527:9000"
-    networks:
-      - mars
 
   rabbitmq:
     image: rabbitmq:3.8.3-management
@@ -55,8 +49,7 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
-    networks:
-      - mars
+
 
   apisix:
     container_name: apisix
@@ -73,8 +66,7 @@ services:
       - "9091:9091"
       - "9443:9443"
       - "9092:9092"
-    networks:
-      - mars
+
 
   etcd:
     container_name: etcd
@@ -89,8 +81,7 @@ services:
       ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
     ports:
       - "2379:2379"
-    networks:
-      - mars
+
 
   redis:
     container_name: redis
@@ -102,8 +93,6 @@ services:
       - /Users/zgh/data/redis_logs:/logs
     ports:
       - "6379:6379"
-    networks:
-      - mars
 
   prometheus:
     container_name: prometheus
@@ -115,8 +104,7 @@ services:
       - "9090:9090"
     depends_on:
       - nacos
-    networks:
-      - mars
+
 
   grafana:
     container_name: grafana
@@ -128,8 +116,7 @@ services:
       - ./grafana_conf/provisioning:/etc/grafana/provisioning
       - ./grafana_conf/dashboards:/var/lib/grafana/dashboards
       - ./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini
-    networks:
-      - mars
+
 
   system:
     container_name: system
@@ -139,8 +126,6 @@ services:
     restart: always
     depends_on:
       - nacos
-    networks:
-      - mars
 
   auth:
     container_name: auth
@@ -150,21 +135,15 @@ services:
     restart: always
     depends_on:
       - nacos
-    networks:
-      - mars
 
   mars-ui:
     container_name: mars-ui
     build: ../app/mars-ui/docker
     restart: always
+    external_links:
+      - apisix
     ports:
       - "80:80"
     depends_on:
       - system
       - auth
-    networks:
-      - mars
-
-networks:
-  mars:
-    driver: bridge
