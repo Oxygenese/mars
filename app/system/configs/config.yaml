@@ -11,7 +11,7 @@ data:
   database:
     driver: mysql
     source: root:970312@tcp(localhost:3306)/mars?parseTime=true&charset=utf8mb4&parseTime=True&loc=Local
-    migrate: false
+    migrate: true
   redis:
     addr: localhost:6379
     read_timeout: 0.2s

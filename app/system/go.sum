@@ -355,6 +355,8 @@ github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042/go.mod h1:TPp
 github.com/lyft/protoc-gen-star v0.5.3/go.mod h1:V0xaHgaf5oCCqmcxYcWiDfTiKsZsRc87/1qhoTACD8w=
 github.com/magiconair/properties v1.8.5/go.mod h1:y3VJvCyxH9uVvJTWEGAELF3aiYNyPKd5NZ3oSwXrF60=
 github.com/mars-projects/kratos/v2 v2.1.6/go.mod h1:vtvwj64p/MtXr1sCfgkqrIJqx+ESMUCf0ADginHwokE=
+github.com/mars-projects/mars v1.0.1-beat h1:3n4Mwpu90j7KKDQTwdHNoqeyRDuk6cKY8GMUEEDHkvU=
+github.com/mars-projects/mars v1.0.1-beat/go.mod h1:Go6A2LsfU4sRWRGHjLax68N1FfnCdrmKEtb9bZVhZcI=
 github.com/mars-projects/oauth2/v4 v4.4.2 h1:KmsVYI3PYK9Z0P7gkeQ/FWakuiY8oLQ7FhXmIey1xKc=
 github.com/mars-projects/oauth2/v4 v4.4.2/go.mod h1:HOuLL7Avku/pXyaVWBI10sHddA3n/bbIsayPBahCLN8=
 github.com/mattn/go-colorable v0.0.9/go.mod h1:9vuHe8Xs5qXnSaW/c/ABM9alt+Vo+STaOChaDxuIBZU=
