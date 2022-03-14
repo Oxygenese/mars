@@ -33,10 +33,7 @@ services:
       - mysql
     restart: always
     networks:
-      - db
-      - app
-
-
+      - mars
   mysql:
     container_name: mysql
     image: nacos/nacos-mysql:8.0.16
@@ -48,22 +45,18 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - db
-      - app
-
-
+      - mars
   apisix-dashboard:
     container_name: apisix-dashboard
     image: apache/apisix-dashboard:2.10.1-alpine
     restart: always
     volumes:
     - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    - ./dashboard_conf:/usr/local/apisix-dashboard/conf
     ports:
     - "9000:9000"
     networks:
-      - db
-      - app
-
+      - mars
   rabbitmq:
     image: rabbitmq:3.8.3-management
     container_name: rabbitmq
@@ -78,16 +71,14 @@ services:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
-      - db
-      - app
-
+      - mars
   apisix:
     container_name: apisix
     image: apache/apisix:2.12.1-alpine
     restart: always
     volumes:
-      - /opt/apisix/apisix_log:/usr/local/apisix/logs
-      - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml
+      - ../docker/apisix_log:/usr/local/apisix/logs
+      - ../docker/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
     depends_on:
       - etcd
     ##network_mode: host
@@ -97,9 +88,7 @@ services:
       - "9443:9443"
       - "9092:9092"
     networks:
-      - db
-      - app
-
+      - mars
   etcd:
     container_name: etcd
     image: bitnami/etcd:3.4.15
@@ -114,8 +103,8 @@ services:
     ports:
       - "2379:2379"
     networks:
-      - db
-      - app
+      - mars
+
 
   redis:
     container_name: redis
@@ -128,23 +117,19 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - db
-      - app
-
+      - mars
   prometheus:
     container_name: prometheus
     image: prom/prometheus:v2.25.0
     restart: always
     volumes:
-      - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus_conf:/etc/prometheus
     ports:
       - "9090:9090"
     depends_on:
       - nacos
     networks:
-      - db
-      - app
-
+      - mars
   grafana:
     container_name: grafana
     image: grafana/grafana:7.3.7
@@ -152,16 +137,12 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana_conf/provisioning:/etc/grafana/provisioning
-      - ./grafana_conf/dashboards:/var/lib/grafana/dashboards
-      - ./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini
+      - ./grafana_conf/provisioning/dashboards/all.yaml:/etc/grafana/provisioning/dashboards/all.yaml
+      - ./grafana_conf/provisioning/datasources/all.yaml:/var/lib/grafana/provisioning/datasources/all.yaml
+      - ./grafana_conf/config:/etc/grafana
     networks:
-      - db
-      - app
-
+      - mars
 
 networks:
-  db:
-    driver: bridge
-  app:
+  mars:
     driver: bridge
