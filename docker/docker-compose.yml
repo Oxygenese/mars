@@ -51,10 +51,9 @@ services:
     image: apache/apisix-dashboard:2.10.1-alpine
     restart: always
     volumes:
-    - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
-    - ./dashboard_conf:/usr/local/apisix-dashboard/conf
+      - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
     ports:
-    - "9000:9000"
+      - "9000:9000"
     networks:
       - mars
   rabbitmq:
@@ -123,7 +122,7 @@ services:
     image: prom/prometheus:v2.25.0
     restart: always
     volumes:
-      - ./prometheus_conf:/etc/prometheus
+      - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     depends_on:
@@ -137,9 +136,21 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./grafana_conf/provisioning/dashboards/all.yaml:/etc/grafana/provisioning/dashboards/all.yaml
-      - ./grafana_conf/provisioning/datasources/all.yaml:/var/lib/grafana/provisioning/datasources/all.yaml
-      - ./grafana_conf/config:/etc/grafana
+      - "./grafana_conf/provisioning:/etc/grafana/provisioning"
+      - "./grafana_conf/dashboards:/var/lib/grafana/dashboards"
+      - "./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini"
+    networks:
+      - mars
+
+  system:
+    container_name: system
+    build: ../app/system
+    volumes:
+      - ./system_conf:/opt/mars/system/conf
+    restart: always
+    ports:
+      - "8004:8004"
+      - "9004:9004"
     networks:
       - mars
 

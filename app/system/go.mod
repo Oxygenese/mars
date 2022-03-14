@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20220310144244-ac99a5c877c4
 	github.com/go-kratos/kratos/v2 v2.2.0
 	github.com/google/uuid v1.3.0
 	github.com/google/wire v0.5.0

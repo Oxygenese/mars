@@ -17,10 +17,11 @@ import (
 	"github.com/mars-projects/mars/conf"
 	"github.com/mars-projects/mars/lib/wire/data"
 	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/lib/wire/register"
 )
 
 // initApp init kratos application.
-func initApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
+func initApp(*conf.Server, *conf.Registry, *conf.Data, *conf.Auth, log.Logger) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		api.ProviderApiOptionSet,
 		data.ProviderRedisTokenStoreSet,
@@ -31,5 +32,6 @@ func initApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) 
 		server.ProviderSet,
 		biz.ProviderBizSet,
 		service.ProviderSet,
+		register.ProviderNacosSet,
 		newApp))
 }

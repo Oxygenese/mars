@@ -1,15 +1,24 @@
 server:
+  name: mars.auth.service
+  version: 1.0.0
   http:
-    addr: 0.0.0.0:8000
-    timeout: 1s
+    addr: 0.0.0.0:8001
+    timeout: 2s
   grpc:
-    addr: 0.0.0.0:9000
+    addr: 0.0.0.0:9001
     timeout: 1s
+client:
+  sys: mars.system.service
 data:
-  database:
-    driver: mysql
-    source: root:root@tcp(127.0.0.1:3306)/test
   redis:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+    password: "970312"
+    db: 1
+auth:
+  key: some-secret-key
+  client_id: test
+  client_secret: test
+  access_expired: 3600
+  refresh_expired: 7200

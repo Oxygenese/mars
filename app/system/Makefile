@@ -1,7 +1,7 @@
 .PHONY: generate
 # generate
-generate:
-	go generate ./...
+wire:
+	cd cmd/system && wire
 
 .PHONY: run
 run:

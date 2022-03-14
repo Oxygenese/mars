@@ -17,12 +17,13 @@ import (
 	"github.com/mars-projects/mars/conf"
 	"github.com/mars-projects/mars/lib/wire/data"
 	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/lib/wire/register"
 )
 
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
+func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
 	client, cleanup, err := data.NewRedisClient(confData, logger)
 	if err != nil {
 		return nil, nil, err
@@ -34,9 +35,10 @@ func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	apiOption := api.NewApiOptions(bizsOption)
 	engine := router.NewGinEngine(authentication, apiOption)
 	httpServer := server.NewHTTPServer(confServer, engine, logger)
-	systemService := service.NewSystemService()
+	systemService := service.NewSystemService(bizsOption)
 	grpcServer := server.NewGRPCServer(confServer, systemService, logger)
-	app := newApp(logger, httpServer, grpcServer)
+	nacosRegistry := register.NewNacosRegistrar(registry)
+	app := newApp(confServer, logger, httpServer, grpcServer, nacosRegistry)
 	return app, func() {
 		cleanup()
 	}, nil
