@@ -150,13 +150,12 @@ func (e SysUserHandler) Update(c *gin.Context) {
 func (e SysUserHandler) Delete(c *gin.Context) {
 	req := dto.SysUserById{}
 	err := e.MakeContext(c).
-		Bind(&req, nil).
+		Bind(&req, binding.JSON).
 		Errors
 	if err != nil {
 		e.InternalErrorResult(err)
 		return
 	}
-
 	// 设置编辑人
 	req.SetUpdateBy(oauth.GetUserId(c))
 

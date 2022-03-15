@@ -45,7 +45,7 @@ export function updateUser(data) {
 // 删除用户
 export function delUser(data) {
   return request({
-    url: '/sys/user',
+    url: '/sys/user/delete',
     method: 'delete',
     data: data
   })

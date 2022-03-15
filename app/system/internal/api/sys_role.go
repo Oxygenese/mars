@@ -112,17 +112,11 @@ func (e SysRoleHandler) Insert(c *gin.Context) {
 	if req.Status == "" {
 		req.Status = "2"
 	}
-	//cb := sdk.Runtime.GetCasbinKey(c.Request.Host)
 	err = e.biz.Insert(&req)
 	if err != nil {
 		e.ErrorResult(500, err, "创建失败")
 		return
 	}
-	//_, err = global.LoadPolicy(c)
-	//if err != nil {
-	//	e.Error(500, err, "")
-	//	return
-	//}
 	e.Result(req.GetId(), "创建成功")
 }
 

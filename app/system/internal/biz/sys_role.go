@@ -74,7 +74,7 @@ func (e *SysRole) Insert(c *dto.SysRoleInsertReq) error {
 	var err error
 	var data models.SysRole
 	var dataMenu []models.SysMenu
-	err = e.orm.Preload("SysApi").Where("menu_id in ?", c.MenuIds).Find(&dataMenu).Error
+	err = e.orm.Where("menu_id in ?", c.MenuIds).Find(&dataMenu).Error
 	if err != nil {
 		e.log.Errorf("db error:%s", err)
 		return err
@@ -89,23 +89,11 @@ func (e *SysRole) Insert(c *dto.SysRoleInsertReq) error {
 			tx.Commit()
 		}
 	}()
-
 	err = tx.Create(&data).Error
 	if err != nil {
 		e.log.Errorf("db error:%s", err)
 		return err
 	}
-
-	//if len(c.MenuIds) > 0 {
-	//	s := SysRoleMenu{}
-	//	s.Orm = e.Orm
-	//	s.Log = e.Log
-	//	err = s.ReloadRule(tx, c.RoleId, c.MenuIds)
-	//	if err != nil {
-	//		e.Log.Errorf("reload casbin rule error, %", err.Error())
-	//		return err
-	//	}
-	//}
 	return nil
 }
 

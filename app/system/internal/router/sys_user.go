@@ -17,7 +17,7 @@ func registerSysUserRouter(r *gin.RouterGroup, option *api.ApiOption, authMiddle
 		g.GET("/page", h.GetPage)
 		g.POST("/create", h.Insert)
 		g.PUT("", h.Update)
-		g.DELETE("/:id", h.Delete)
+		g.DELETE("/delete", h.Delete)
 		g.PUT("/status", h.UpdateStatus)
 		g.PUT("/pwd/reset", h.ResetPwd)
 		g.POST("/avatar", h.InsetAvatar)
