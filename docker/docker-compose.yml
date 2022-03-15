@@ -171,19 +171,7 @@ services:
     networks:
       - mars
 
-  mars-ui:
-    container_name: mars-ui
-    build: ../app/mars-ui/docker
-    restart: always
-    external_links:
-      - apisix
-    ports:
-      - "80:80"
-    depends_on:
-      - system
-      - auth
-    networks:
-      - mars
+
 
 networks:
   mars:

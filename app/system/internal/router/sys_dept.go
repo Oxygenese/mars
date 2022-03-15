@@ -20,6 +20,6 @@ func registerSysDeptRouter(r *gin.RouterGroup, option *api.ApiOption, authMiddle
 		g.PUT("/:deptId", h.Update)
 		g.DELETE("", h.Delete)
 		g.GET("/tree", h.Get2Tree)
-		g.GET("/tree/select/:roleId", h.GetDeptTreeRoleSelect)
+		g.GET("/tree/dept/select/:roleId", h.GetDeptTreeRoleSelect)
 	}
 }

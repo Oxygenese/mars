@@ -186,7 +186,9 @@ func (e SysDeptHandler) Get2Tree(c *gin.Context) {
 
 // GetDeptTreeRoleSelect TODO: 此接口需要调整不应该将list和选中放在一起
 func (e SysDeptHandler) GetDeptTreeRoleSelect(c *gin.Context) {
+	req := dto.SelectRole{}
 	err := e.MakeContext(c).
+		Bind(req, nil).
 		Errors
 	if err != nil {
 		e.ErrorResult(500, err, err.Error())

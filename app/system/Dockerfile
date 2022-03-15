@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         && rm -rf /var/lib/apt/lists/ \
         && apt-get autoremove -y && apt-get autoclean -y
 RUN ["mkdir","-p","/app/cache/naming"]
-COPY ./bin /app
+COPY ./bin/ /app
 WORKDIR /app
 EXPOSE 8004
 EXPOSE 9004

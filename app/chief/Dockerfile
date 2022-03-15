@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         && rm -rf /var/lib/apt/lists/ \
         && apt-get autoremove -y && apt-get autoclean -y
 
-COPY ./bin /app
+COPY ./bin/ /app
 WORKDIR /app
 RUN ["mkdir","-p","/app/cache/naming"]
 EXPOSE 8002
