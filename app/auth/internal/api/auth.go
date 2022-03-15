@@ -22,6 +22,23 @@ func (api *TokenApi) Token(ctx http.Context) error {
 	return ctx.JSON(200, res)
 }
 
+func (api *TokenApi) Logout(ctx http.Context) error {
+	accessToken := ctx.Header().Get("Authorization")
+	if accessToken == "" {
+		accessToken = ctx.Query().Get("token")
+	}
+	err := api.server.Manager.RemoveAccessToken(ctx, accessToken)
+	if err != nil {
+		return err
+	}
+	var res = map[string]interface{}{
+		"code": 200,
+		"msg":  "注销成功",
+	}
+	ctx.JSON(200, res)
+	return nil
+}
+
 func (api *TokenApi) Authorize(ctx http.Context) error {
 	err := api.server.HandleAuthorizeRequest(ctx.Response(), ctx.Request())
 	if err != nil {

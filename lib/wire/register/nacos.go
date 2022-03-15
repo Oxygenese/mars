@@ -17,9 +17,17 @@ func NewNacosRegistrar(registry *conf.Registry) *nacos.Registry {
 	sc := []constant.ServerConfig{
 		*constant.NewServerConfig(registry.Nacos.Address, registry.Nacos.Port),
 	}
+	cc := constant.NewClientConfig(
+		constant.WithTimeoutMs(5000),
+		constant.WithNotLoadCacheAtStart(true),
+		constant.WithLogDir("./nacos/log"),
+		constant.WithCacheDir("./cache"),
+		constant.WithLogLevel("error"),
+	)
 	client, err := clients.NewNamingClient(
 		vo.NacosClientParam{
 			ServerConfigs: sc,
+			ClientConfig:  cc,
 		},
 	)
 	if err != nil {

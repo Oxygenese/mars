@@ -17,7 +17,7 @@ const name = defaultSettings.title || 'vue Element Admin' // page title
 const port = process.env.port || process.env.npm_config_port || 9527 // dev port
 
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin')
-
+const url = 'http://apisix:9080'
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
   /**
@@ -39,6 +39,15 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
+    },
+    proxy: {
+      '/': {
+        target: url,
+        ws: true,
+        pathRewrite: {
+          '^/': '/'
+        }
+      }
     }
   },
   configureWebpack: {

@@ -1,11 +1,11 @@
 .PHONY: generate
 # generate
 wire:
-	cd cmd/auth && wire
+	cd cmd/chief && wire
 
 .PHONY: run
 run:
-	cd cmd/auth && go run .
+	cd cmd/chief && go run .
 
 .PHONY: build
 # build

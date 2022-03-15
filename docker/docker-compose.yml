@@ -6,8 +6,8 @@ services:
     env_file:
       - ./nacos_conf/nacos-standlone-mysql.env
     volumes:
-      - /Users/zgh/data/nacos/standalone-logs/:/home/nacos/logs
-      - /Users/zgh/data/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
+      - /data/nacos/standalone-logs/:/home/nacos/logs
+      - /data/nacos/init.d/custom.properties:/home/nacos/init.d/custom.properties
     ports:
       - "8848:8848"
       - "9848:9848"
@@ -15,6 +15,9 @@ services:
     depends_on:
       - mysql
     restart: always
+    networks:
+      - mars
+
 
   mysql:
     container_name: mysql
@@ -23,9 +26,11 @@ services:
     env_file:
       - ./nacos_conf/mysql.env
     volumes:
-      - /Users/zgh/data/mysql_data:/var/lib/mysql
+      - /data/mysql_data:/var/lib/mysql
     ports:
       - "3306:3306"
+    networks:
+      - mars
 
   apisix-dashboard:
     container_name: apisix-dashboard
@@ -35,28 +40,31 @@ services:
       - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
     ports:
       - "9527:9000"
+    networks:
+      - mars
 
   rabbitmq:
     image: rabbitmq:3.8.3-management
     container_name: rabbitmq
     restart: always
-    hostname: myRabbitmq
+    hostname: rabbitmq
     ports:
       - "15672:15672"
       - "5672:5672"
     volumes:
-      - /Users/zgh/data/rabbitmq:/var/lib/rabbitmq
+      - /data/rabbitmq:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=admin
       - RABBITMQ_DEFAULT_PASS=admin
-
+    networks:
+      - mars
 
   apisix:
     container_name: apisix
     image: apache/apisix:2.12.1-alpine
     restart: always
     volumes:
-      - /Users/zgh/data/apisix_log:/usr/local/apisix/logs
+      - /data/apisix_log:/usr/local/apisix/logs
       - ../docker/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
     depends_on:
       - etcd
@@ -66,14 +74,16 @@ services:
       - "9091:9091"
       - "9443:9443"
       - "9092:9092"
-
+    networks:
+      - mars
 
   etcd:
     container_name: etcd
     image: bitnami/etcd:3.4.15
     restart: always
+    privileged: true
     volumes:
-      - /Users/zgh/data/etcd_data:/bitnami/etcd/data
+      - /data/etcd_data:/bitnami/etcd/data
     environment:
       ETCD_ENABLE_V2: "true"
       ALLOW_NONE_AUTHENTICATION: "yes"
@@ -81,18 +91,27 @@ services:
       ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
     ports:
       - "2379:2379"
-
+    networks:
+      - mars
 
   redis:
     container_name: redis
     restart: always
-    image: redis:6
+    image: redis:latest
+    privileged: true
+    command:
+      - /bin/bash
+      - -c
+      - redis-server --requirepass 970312
     volumes:
-      - /Users/zgh/data/redis_data:/data
-      - ./redis_conf/redis.conf:/usr/local/etc/redis/redis.conf
-      - /Users/zgh/data/redis_logs:/logs
+      - /data/redis_data:/data
+#      - ./redis_conf/redis.conf:/usr/local/bin/redis.conf
+      - /data/redis_logs:/logs
     ports:
       - "6379:6379"
+    networks:
+      - mars
+
 
   prometheus:
     container_name: prometheus
@@ -104,7 +123,8 @@ services:
       - "9090:9090"
     depends_on:
       - nacos
-
+    networks:
+      - mars
 
   grafana:
     container_name: grafana
@@ -116,7 +136,8 @@ services:
       - ./grafana_conf/provisioning:/etc/grafana/provisioning
       - ./grafana_conf/dashboards:/var/lib/grafana/dashboards
       - ./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini
-
+    networks:
+      - mars
 
   system:
     container_name: system
@@ -126,7 +147,8 @@ services:
     restart: always
     depends_on:
       - nacos
-
+    networks:
+      - mars
   auth:
     container_name: auth
     build: ../app/auth
@@ -135,6 +157,19 @@ services:
     restart: always
     depends_on:
       - nacos
+    networks:
+      - mars
+
+  chief:
+    container_name: chief
+    build: ../app/chief
+    volumes:
+      - ../docker/chief_conf:/data/chief/conf
+    restart: always
+    depends_on:
+      - nacos
+    networks:
+      - mars
 
   mars-ui:
     container_name: mars-ui
@@ -147,3 +182,13 @@ services:
     depends_on:
       - system
       - auth
+    networks:
+      - mars
+
+networks:
+  mars:
+    driver: bridge
+#    ipam:
+#      driver: default
+#      config:
+#        - subnet: 172.168.1.0/16

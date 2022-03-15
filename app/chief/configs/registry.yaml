@@ -1,0 +1,3 @@
+nacos:
+  address: localhost
+  port: 8848

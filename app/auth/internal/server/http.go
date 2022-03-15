@@ -35,6 +35,7 @@ func NewHTTPServer(c *conf.Server, logger log.Logger, captcha *api.CaptchaApi, t
 	r.GET("/refresh_token", token.RefreshToken)
 	r.GET("/authorize", token.Authorize)
 	r.GET("captcha", captcha.GenerateCaptchaHandler)
+	r.PUT("logout", token.Logout)
 	return srv
 }
 func CorsFilter(next https.Handler) https.Handler {
