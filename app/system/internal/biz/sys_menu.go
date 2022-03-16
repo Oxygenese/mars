@@ -56,7 +56,7 @@ func (e *SysMenu) getPage(c *dto.SysMenuGetPageReq, list *[]models.SysMenu) *Sys
 		Scopes(
 			cDto.OrderDest("sort", false),
 			cDto.MakeCondition(c.GetNeedSearch()),
-		).Preload("SysApi").
+		).
 		Find(list).Error
 	if err != nil {
 		e.log.Errorf("getSysMenuPage error:%s", err)

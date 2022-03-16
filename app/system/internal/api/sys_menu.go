@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/mars-projects/mars/app/system/internal/biz"
@@ -31,10 +32,10 @@ func NewMenuHandler(menu *biz.SysMenu, role *biz.SysRole) *SysMenuHandler {
 func (e SysMenuHandler) GetPage(c *gin.Context) {
 	req := dto.SysMenuGetPageReq{}
 	err := e.MakeContext(c).
-		Bind(&req, binding.Form).
+		Bind(&req, binding.Query).
 		Errors
 	if err != nil {
-		e.ErrorResult(500, err, err.Error())
+		e.InternalErrorResult(err)
 		return
 	}
 	var list = make([]models.SysMenu, 0)
@@ -43,6 +44,7 @@ func (e SysMenuHandler) GetPage(c *gin.Context) {
 		e.ErrorResult(500, err, "查询失败")
 		return
 	}
+	fmt.Println(list)
 	e.Result(list, "查询成功")
 }
 
