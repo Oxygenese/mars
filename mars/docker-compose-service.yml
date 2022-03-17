@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  mysql:
+    image: registry.cn-hangzhou.aliyuncs.com/mars-projects/mysql:8.0.16
+    ports:
+      - "3306:3306"
+    networks:
+      - backend
+    network_mode: host
+    env_file:
+      - ./nacos_conf/mysql.env
+    volumes:
+      - mysql_data:/var/lib/mysql
+    deploy:
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - "node.role==manager"
+
+  nacos:
+    image: registry.cn-hangzhou.aliyuncs.com/mars-projects/nacos-server:2.0.3
+    ports:
+      - "8848:8848"
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    env_file:
+      - ./nacos_conf/nacos-standlone-mysql.env
+    network_mode: host
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 2
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - nacos_data:/home/nacos/init.d/custom.properties
+      - nacos_log:/home/nacos/logs
+
+
+networks:
+  backend:
+  frontend:
+
+volumes:
+  mysql_data:
+  nacos_data:
+  nacos_log:

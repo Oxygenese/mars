@@ -65,7 +65,7 @@ services:
     restart: always
     volumes:
       - /data/apisix_log:/usr/local/apisix/logs
-      - ../docker/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - ../mars/apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
     depends_on:
       - etcd
     ##network_mode: host
@@ -139,44 +139,39 @@ services:
     networks:
       - mars
 
-  system:
-    container_name: system
-    build: ../app/system
-    volumes:
-      - ../docker/system_conf:/data/system/conf
-    restart: always
-    depends_on:
-      - nacos
-    networks:
-      - mars
-  auth:
-    container_name: auth
-    build: ../app/auth
-    volumes:
-      - ../docker/auth_conf:/data/auth/conf
-    restart: always
-    depends_on:
-      - nacos
-    networks:
-      - mars
-
-  chief:
-    container_name: chief
-    build: ../app/chief
-    volumes:
-      - ../docker/chief_conf:/data/chief/conf
-    restart: always
-    depends_on:
-      - nacos
-    networks:
-      - mars
-
-
+#  system:
+#    container_name: system
+#    build: ../app/system
+#    volumes:
+#      - ../mars/system_conf:/data/system/conf
+#    restart: always
+#    depends_on:
+#      - nacos
+#    networks:
+#      - mars
+#  auth:
+#    container_name: auth
+#    build: ../app/auth
+#    volumes:
+#      - ../mars/auth_conf:/data/auth/conf
+#    restart: always
+#    depends_on:
+#      - nacos
+#    networks:
+#      - mars
+#
+#  chief:
+#    container_name: chief
+#    build: ../app/chief
+#    volumes:
+#      - ../mars/chief_conf:/data/chief/conf
+#    restart: always
+#    depends_on:
+#      - nacos
+#    networks:
+#      - mars
 
 networks:
   mars:
     driver: bridge
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: 172.168.1.0/16
+
