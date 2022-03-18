@@ -18,7 +18,7 @@ func NewNacosRegistrar(registry *conf.Registry) *nacos.Registry {
 		*constant.NewServerConfig(registry.Nacos.Address, registry.Nacos.Port),
 	}
 	cc := constant.NewClientConfig(
-		constant.WithTimeoutMs(5000),
+		constant.WithTimeoutMs(10000),
 		constant.WithNotLoadCacheAtStart(true),
 		constant.WithLogDir("./nacos/log"),
 		constant.WithCacheDir("./cache"),

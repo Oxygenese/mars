@@ -1,0 +1,54 @@
+version: '3.9'
+services:
+  system:
+    image: "registry.cn-hangzhou.aliyuncs.com/mars-projects/system:v1.0.1-beat"
+    volumes:
+      - ./system_conf:/data/system/conf
+    restart: always
+    depends_on:
+      - nacos
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  auth:
+    image: "registry.cn-hangzhou.aliyuncs.com/mars-projects/auth:v1.0.1-beat"
+    volumes:
+      - ./auth_conf:/data/auth/conf
+    restart: always
+    depends_on:
+      - nacos
+      - system
+    networks:
+      - backend
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+  mars-ui:
+    image: "registry.cn-hangzhou.aliyuncs.com/mars-projects/mars-ui:v1.0.1-beat"
+    ports:
+      - protocol: tcp
+        published: 80
+        target: 80
+        mode: host
+    networks:
+      - backend
+    deploy:
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - "node.role==manager"
+networks:
+  backend:
+

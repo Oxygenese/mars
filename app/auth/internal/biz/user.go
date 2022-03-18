@@ -15,6 +15,6 @@ func NewUserBiz(client system.SystemClient, logger log.Logger) *UserBiz {
 	return &UserBiz{client: client, log: log.NewHelper(log.With(logger, "module", "usecase/sys"))}
 }
 
-func (uc *UserBiz) FindSysUser(ctx context.Context, in *system.SysUserInfoReq) (*system.SysUserReply, error) {
+func (uc UserBiz) FindSysUser(ctx context.Context, in *system.SysUserInfoReq) (*system.SysUserReply, error) {
 	return uc.client.SysUserInfo(ctx, in)
 }
