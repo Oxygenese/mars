@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package chief;
+import "google/protobuf/descriptor.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/mars-projects/mars/api/chief;chief";
+
+service ImageService {
+  rpc OnMessageReceived(Message) returns (Reply){
+    option (google.api.http) = {
+      post: "/chief/image",
+      body: "*"
+    };
+  }
+}
+
+service InstanceService {
+  rpc OnMessageReceived(Message) returns (Reply){
+    option (google.api.http) = {
+      post: "/chief/instance",
+      body: "*"
+    };
+  }
+}
+
+message ArrayParams {
+  repeated string string_array = 1;
+  repeated uint64 uint_array = 2;
+}
+
+message Reply {
+  uint32 code = 1;
+  string message = 2;
+}
+
+message Message {
+  uint32 id = 1;
+  map<uint32,bool> bool_params = 2;
+  map<uint32,string> string_params = 3;
+  map<uint32,uint32> uint_params = 4;
+  map<uint32,int64> int_params = 5;
+  map<uint32,float> float_params = 6;
+  map<uint32,ArrayParams> array_params = 8;
+  bool success = 9;
+  string error = 10;
+  string sender = 11;
+  uint32 transaction = 12;
+  uint32 to = 13;
+  uint32 from = 14;
+  string message_id = 15;
+}
+

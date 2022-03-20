@@ -1,0 +1,214 @@
+version: '3.9'
+services:
+  mon-node1:
+    image: ceph/daemon:latest-luminous
+    volumes:
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/
+        source: /var/lib/
+        read_only: false
+      - type: bind
+        target: /var/log/ceph
+        source: /var/log/ceph
+        read_only: false
+    networks:
+      - host
+    environment:
+      - MON_IP=10.211.55.33
+      - CEPH_PUBLIC_NETWORK=10.211.55.0/24
+    command:
+      - mon
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.name==node1"
+  mon-node2:
+    image: ceph/daemon:latest-luminous
+    volumes:
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/
+        source: /var/lib/
+        read_only: false
+      - type: bind
+        target: /var/log/ceph
+        source: /var/log/ceph
+        read_only: false
+    networks:
+      - host
+    environment:
+      - MON_IP=10.211.55.34
+      - CEPH_PUBLIC_NETWORK=10.211.55.0/24
+    command:
+      - mon
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.name==node2"
+  mon-node3:
+    image: ceph/daemon:latest-luminous
+    volumes:
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/
+        source: /var/lib/
+        read_only: false
+      - type: bind
+        target: /var/log/ceph
+        source: /var/log/ceph
+        read_only: false
+    environment:
+      - MON_IP=10.211.55.32
+      - CEPH_PUBLIC_NETWORK=10.211.55.0/24
+    networks:
+      - host
+    command:
+      - mon
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.name==node3"
+  osd-node1:
+    image: ceph/daemon:latest-luminous
+    networks:
+      - host
+    depends_on:
+      - mon-node1
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_NAME=mon-node1
+      - MON_IP=10.211.55.33
+      - OSD_TYPE=directory
+    command:
+      - osd
+    volumes:
+      - type: bind
+        target: /var/lib/ceph/
+        source: /var/lib/ceph/
+        read_only: false
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/ceph/osd
+        source: /var/lib/ceph/osd
+        read_only: false
+      - type: bind
+        target: /etc/localtime:ro
+        source: /etc/localtime
+        read_only: false
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.name==node1"
+  osd-node2:
+    image: ceph/daemon:latest-luminous
+    networks:
+      - host
+    depends_on:
+      - mon-node2
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_NAME=mon-node1
+      - MON_IP=10.211.55.34
+      - OSD_TYPE=directory
+    command:
+      - osd
+    volumes:
+      - type: bind
+        target: /var/lib/ceph/
+        source: /var/lib/ceph/
+        read_only: false
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/ceph/osd
+        source: /var/lib/ceph/osd
+        read_only: false
+      - type: bind
+        target: /etc/localtime:ro
+        source: /etc/localtime
+        read_only: false
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.name==node2"
+  osd-node3:
+    image: ceph/daemon:latest-luminous
+    networks:
+      - host
+    depends_on:
+      - mon-node3
+    environment:
+      - CLUSTER=ceph
+      - WEIGHT=1.0
+      - MON_NAME=mon-node1
+      - MON_IP=10.211.55.32
+      - OSD_TYPE=directory
+    command:
+      - osd
+    volumes:
+      - type: bind
+        target: /var/lib/ceph/
+        source: /var/lib/ceph/
+        read_only: false
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/ceph/osd
+        source: /var/lib/ceph/osd
+        read_only: false
+      - type: bind
+        target: /etc/localtime:ro
+        source: /etc/localtime
+        read_only: false
+    deploy:
+      placement:
+        constraints:
+          - "node.labels.name==node3"
+  mgr-master:
+    image: ceph/daemon:latest-luminous
+    networks:
+      - host
+    environment:
+      - CLUSTER=ceph
+    command:
+      - mgr
+    depends_on:
+      - mon-node1
+    volumes:
+      - type: bind
+        target: /etc/ceph
+        source: /etc/ceph
+        read_only: false
+      - type: bind
+        target: /var/lib/ceph/
+        source: /var/lib/ceph/
+        read_only: false
+    deploy:
+      placement:
+        constraints:
+          - "node.role==task"
+
+networks:
+  host:
+    external:
+      name: host
+  db_net:

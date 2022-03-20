@@ -12,7 +12,7 @@ type UserBiz struct {
 }
 
 func NewUserBiz(client system.SystemClient, logger log.Logger) *UserBiz {
-	return &UserBiz{client: client, log: log.NewHelper(log.With(logger, "module", "usecase/sys"))}
+	return &UserBiz{client: client, log: log.NewHelper(log.With(logger, "modules", "usecase/sys"))}
 }
 
 func (uc UserBiz) FindSysUser(ctx context.Context, in *system.SysUserInfoReq) (*system.SysUserReply, error) {

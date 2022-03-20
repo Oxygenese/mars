@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  redis:
+    image: redis:6
+    ports:
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host
+    networks:
+      - db_net
+    command:
+      - /bin/bash
+      - -c
+      - redis-server --requirepass 970312
+    volumes:
+      - redis_data:/data
+      - redis_log:/logs
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+networks:
+  db_net:
+volumes:
+  redis_log:
+  redis_data:

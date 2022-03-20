@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  nacos:
+    image: nacos/nacos-server:2.0.3
+    ports:
+      - target: 8848
+        protocol: tcp
+        mode: host
+        published: 8848
+    depends_on:
+      - mysql
+    networks:
+      - app_net
+      - db_net
+    env_file:
+      - ./nacos_conf/nacos-standlone-mysql.env
+    volumes:
+      - nacos_data:/home/nacos/init.d/custom.properties
+      - nacos_log:/home/nacos/logs
+    deploy:
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - "node.role==task"
+
+volumes:
+  nacos_data:
+  nacos_log:
+
+networks:
+  app_net:
+  db_net:

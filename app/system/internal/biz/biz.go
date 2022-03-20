@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-// ProviderBizSet is biz providers.
+// ProviderBizSet is task providers.
 var ProviderBizSet = wire.NewSet(NewBizsOption)
 
 type BizsOption struct {

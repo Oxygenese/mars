@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  system:
+    image: potatozgh/system:v1.0.1-beat
+    volumes:
+      - ./system_conf:/data/system/conf
+    depends_on:
+      - nacos
+    networks:
+      - db_net
+      - app_net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  db_net:
+  app_net:

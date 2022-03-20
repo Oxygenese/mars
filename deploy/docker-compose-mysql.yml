@@ -1,0 +1,26 @@
+version: '3.9'
+services:
+  mysql:
+    image: nacos/nacos-mysql:8.0.16
+    ports:
+      - protocol: tcp
+        published: 3306
+        target: 3306
+        mode: host
+    networks:
+      - db_net
+    env_file:
+      - ./nacos_conf/mysql.env
+    volumes:
+      - mysql_data:/var/lib/mysql
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+networks:
+  db_net:
+
+volumes:
+  mysql_data:

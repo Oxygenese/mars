@@ -10,6 +10,10 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/mars-projects/mars/app/chief/internal/server"
+	"github.com/mars-projects/mars/app/chief/internal/service"
+	"github.com/mars-projects/mars/app/chief/internal/task"
+	"github.com/mars-projects/mars/common/wire/sender"
+	"github.com/mars-projects/mars/common/wire/transaction"
 	"github.com/mars-projects/mars/conf"
 )
 
@@ -17,8 +21,15 @@ import (
 
 // initApp init kratos application.
 func initApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	httpServer := server.NewHTTPServer(confServer, logger)
-	grpcServer := server.NewGRPCServer(confServer, logger)
+	transactionEngine := transaction.NewTransactionEngine()
+	messageSender := sender.NewMessageSender()
+	taskManager, err := task.NewTaskManager(transactionEngine, messageSender)
+	if err != nil {
+		return nil, nil, err
+	}
+	imageService := service.NewImageService(taskManager)
+	httpServer := server.NewHTTPServer(confServer, imageService, logger)
+	grpcServer := server.NewGRPCServer(confServer, imageService, logger)
 	app := newApp(logger, httpServer, grpcServer)
 	return app, func() {
 	}, nil

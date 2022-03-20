@@ -1,0 +1,103 @@
+version: '3.9'
+services:
+  etcd:
+    image: bitnami/etcd:3.4.15
+    volumes:
+      - etcd_data:/bitnami/etcd/data
+    environment:
+      ETCD_ENABLE_V2: "true"
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://0.0.0.0:2379"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+    ports:
+      - protocol: tcp
+        target: 2379
+        mode: ingress
+        published: 2379
+    networks:
+      - db_net
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+      restart_policy:
+        condition: on-failure
+  apisix:
+    image: apache/apisix:2.12.1-alpine
+    volumes:
+      - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+      - apisix_log:/usr/local/apisix/logs
+    ports:
+      - "9080:9080"
+      - "9091:9091"
+      - "9443:9443"
+      - "9092:9092"
+    networks:
+      - app_net
+      - db_net
+      - proxy_net
+    depends_on:
+      - etcd
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+  apisix-dashboard:
+    image: apache/apisix-dashboard:2.10.1-alpine
+    volumes:
+      - ./dashboard_conf/conf.yaml:/usr/local/apisix-dashboard/conf/conf.yaml
+    ports:
+      - mode: host
+        protocol: tcp
+        target: 9000
+        published: 9527
+    networks:
+      - proxy_net
+      - app_net
+      - db_net
+    deploy:
+      placement:
+        max_replicas_per_node: 1
+        constraints:
+          - "node.role==task"
+  prometheus:
+    image: prom/prometheus:v2.25.0
+    volumes:
+      - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - proxy_net
+      - app_net
+      - db_net
+    ports:
+      - target: 9090
+        mode: ingress
+        published: 9090
+        protocol: tcp
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+  grafana:
+    image: grafana/grafana:7.3.7
+    ports:
+      - mode: ingress
+        published: 3000
+        target: 3000
+        protocol: tcp
+    volumes:
+      - ./grafana_conf/provisioning:/etc/grafana/provisioning
+      - ./grafana_conf/dashboards:/var/lib/grafana/dashboards
+      - ./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini
+    networks:
+      - proxy_net
+      - app_net
+      - db_net
+
+volumes:
+  etcd_data:
+  apisix_log:
+
+networks:
+  proxy_net:
+  app_net:
+  db_net:
