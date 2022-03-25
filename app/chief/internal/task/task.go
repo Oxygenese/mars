@@ -8,13 +8,12 @@ import (
 var ProviderTasksManagerSet = wire.NewSet(NewTaskManager)
 
 type TasksManager struct {
-	*transaction.TransactionEngine
+	*transaction.Engine
 }
 
-func NewTaskManager(engine *transaction.TransactionEngine) *TasksManager {
+func NewTaskManager(engine *transaction.Engine) *TasksManager {
 	var err error
-	manager := &TasksManager{TransactionEngine: engine}
-	err = manager.RegisterExecutor(transaction.CreateImage, false, NewCreateImageExecutor())
+	manager := &TasksManager{Engine: engine}
 	err = manager.Start()
 	if err != nil {
 		panic(err)

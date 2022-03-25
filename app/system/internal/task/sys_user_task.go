@@ -10,18 +10,91 @@ import (
 	"gorm.io/gorm"
 )
 
-// CreateSysUserExecutor 创建用户
-type CreateSysUserExecutor struct {
+type UpdateSysUserExecutor struct {
+	*biz.SysUser
 }
 
-func (executor *CreateSysUserExecutor) Execute(request *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
-	res := &api.Reply{
-		Code:    200,
-		Data:    "",
-		Message: "创建成功",
+func (executor UpdateSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.SysUserUpdateReq{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
 	}
-	respChan <- res
+	req.SetCreateBy(message.GetUserId())
+	err = executor.Update(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("更新成功", message.GetRequestId(), nil)
 	return nil
+}
+
+type DeleteSysUserExecutor struct {
+	*biz.SysUser
+}
+
+func (executor DeleteSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.SysUserById{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	req.SetCreateBy(message.GetUserId())
+
+	err = executor.Remove(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("删除成功", message.GetRequestId(), nil)
+	return nil
+}
+
+type ResetSysUserPwdExecutor struct {
+	*biz.SysUser
+}
+
+func (executor ResetSysUserPwdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.ResetSysUserPwdReq{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	req.SetCreateBy(message.GetUserId())
+	err = executor.ResetPwd(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("更新成功", message.GetRequestId(), nil)
+	return nil
+}
+
+// CreateSysUserExecutor 创建用户
+type CreateSysUserExecutor struct {
+	*biz.SysUser
+}
+
+func (executor *CreateSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
+	req := dto.SysUserInsertReq{}
+	err = message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	// 设置创建人
+	req.SetCreateBy(message.GetUserId())
+	err = executor.Insert(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("创建成功", message.GetRequestId(), nil)
+	return
 }
 
 type QuerySysUserProfileExecutor struct {
@@ -35,7 +108,7 @@ func (e QuerySysUserProfileExecutor) Execute(message *api.Message, respChan chan
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	req.SetCreateBy(message.GetUserId())
+	req.Id = message.GetUserId()
 	sysUser := models.SysUser{}
 	roles := make([]models.SysRole, 0)
 	posts := make([]models.SysPost, 0)

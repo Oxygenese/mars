@@ -2,17 +2,18 @@ package service
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	pb "github.com/mars-projects/mars/api/chief"
+	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/chief/internal/task"
-	"github.com/mars-projects/mars/common/transaction"
 )
 
 // ProviderServiceSet is service providers.
 var ProviderServiceSet = wire.NewSet(NewChiefService)
 
 type ChiefService struct {
-	pb.UnimplementedChiefServer
+	api.UnimplementedChiefServer
 	taskManager *task.TasksManager
 }
 
@@ -25,11 +26,28 @@ type Image struct {
 	Cap  string
 }
 
-func (s *ChiefService) OnMessageReceived(ctx context.Context, req *pb.Message) (*pb.Reply, error) {
-	msg := transaction.NewTransJsonMessage(req)
-	err := s.taskManager.PushMessage(msg)
-	if err != nil {
+func (s *ChiefService) OnMessageReceived(ctx context.Context, req *api.Request) (*api.Reply, error) {
+	var err error
+	msg := &api.Message{
+		Request: req,
+		Context: ctx,
+	}
+	if !s.taskManager.IsExecutorExists(req.Operation) {
+		err = errors.New(404, "Not Found", "NotFound")
+		log.Errorf("[service] PushMessage err :%s", err)
 		return nil, err
 	}
-	return &pb.Reply{Code: 200, Message: "发送成功", Success: true}, nil
+	err = s.taskManager.PushMessage(msg)
+	if err != nil {
+		log.Errorf("[service] PushMessage err :%s", err)
+		return nil, err
+	}
+	if !s.taskManager.IsSync(req.GetOperation()) {
+		res := <-s.taskManager.GetResChan(req.GetRequestId())
+		return res, nil
+	}
+	return &api.Reply{
+		Code:    200,
+		Message: "发送成功",
+	}, nil
 }

@@ -60,7 +60,7 @@ func (e *SysUser) Get(d *dto.SysUserById, model *models.SysUser) error {
 }
 
 // Insert 创建SysUser对象
-func (e *SysUser) Insert(c *dto.SysUserInsertReq) error {
+func (e SysUser) Insert(c *dto.SysUserInsertReq) error {
 	var err error
 	var data models.SysUser
 	var i int64

@@ -139,6 +139,7 @@ func (e *SysRole) Update(c *dto.SysRoleUpdateReq) error {
 // Remove 删除SysRole
 func (e *SysRole) Remove(c *dto.SysRoleDeleteReq) error {
 	var err error
+	e.log.Info("[sys_role] delete ids:%s", c)
 	tx := e.orm.Begin()
 	defer func() {
 		if err != nil {
@@ -150,7 +151,6 @@ func (e *SysRole) Remove(c *dto.SysRoleDeleteReq) error {
 	var model = models.SysRole{}
 	tx.Preload("SysMenu").Preload("SysDept").First(&model, c.GetId())
 	db := tx.Select(clause.Associations).Delete(&model)
-
 	if db.Error != nil {
 		e.log.Errorf("db error:%s", err)
 		return err

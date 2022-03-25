@@ -14,7 +14,6 @@ type QuerySysDeptTreeExecutor struct {
 func (e QuerySysDeptTreeExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysDeptGetPageReq{}
 	err := message.UnMarshal(&req)
-	e.Log.Info("[QuerySysDeptTreeExecutor] message.UnMarshal SysDeptGetPageReq :%s", req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -26,5 +25,37 @@ func (e QuerySysDeptTreeExecutor) Execute(message *api.Message, respChan chan *a
 		return nil
 	}
 	respChan <- api.ReplyOk("查询成功", message.RequestId, &list)
+	return nil
+}
+
+type QuerySysDeptTreeRoleSelectExecutor struct {
+	*biz.SysDept
+}
+
+func (executor QuerySysDeptTreeRoleSelectExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.SelectRole{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	result, err := executor.SetDeptLabel()
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	menuIds := make([]int, 0)
+	if req.RoleId != 0 {
+		menuIds, err = executor.GetWithRoleId(req.RoleId)
+		if err != nil {
+			respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+			return nil
+		}
+	}
+	res := map[string]interface{}{
+		"depts":       result,
+		"checkedKeys": menuIds,
+	}
+	respChan <- api.ReplyOk("查询成功", message.RequestId, &res)
 	return nil
 }

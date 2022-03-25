@@ -18,12 +18,12 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 type ChiefHTTPServer interface {
-	OnMessageReceived(context.Context, *Request) (*Request, error)
+	OnMessageReceived(context.Context, *Request) (*Reply, error)
 }
 
 func RegisterChiefHTTPServer(s *http.Server, srv ChiefHTTPServer) {
 	r := s.Route("/")
-	r.POST("/chief/image", _Chief_OnMessageReceived0_HTTP_Handler(srv))
+	r.POST("/chief", _Chief_OnMessageReceived0_HTTP_Handler(srv))
 }
 
 func _Chief_OnMessageReceived0_HTTP_Handler(srv ChiefHTTPServer) func(ctx http.Context) error {
@@ -40,13 +40,13 @@ func _Chief_OnMessageReceived0_HTTP_Handler(srv ChiefHTTPServer) func(ctx http.C
 		if err != nil {
 			return err
 		}
-		reply := out.(*Request)
+		reply := out.(*Reply)
 		return ctx.Result(200, reply)
 	}
 }
 
 type ChiefHTTPClient interface {
-	OnMessageReceived(ctx context.Context, req *Request, opts ...http.CallOption) (rsp *Request, err error)
+	OnMessageReceived(ctx context.Context, req *Request, opts ...http.CallOption) (rsp *Reply, err error)
 }
 
 type ChiefHTTPClientImpl struct {
@@ -57,9 +57,9 @@ func NewChiefHTTPClient(client *http.Client) ChiefHTTPClient {
 	return &ChiefHTTPClientImpl{client}
 }
 
-func (c *ChiefHTTPClientImpl) OnMessageReceived(ctx context.Context, in *Request, opts ...http.CallOption) (*Request, error) {
-	var out Request
-	pattern := "/chief/image"
+func (c *ChiefHTTPClientImpl) OnMessageReceived(ctx context.Context, in *Request, opts ...http.CallOption) (*Reply, error) {
+	var out Reply
+	pattern := "/chief"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/api.Chief/OnMessageReceived"))
 	opts = append(opts, http.PathTemplate(pattern))

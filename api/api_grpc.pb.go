@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ChiefClient interface {
-	OnMessageReceived(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Request, error)
+	OnMessageReceived(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Reply, error)
 }
 
 type chiefClient struct {
@@ -33,8 +33,8 @@ func NewChiefClient(cc grpc.ClientConnInterface) ChiefClient {
 	return &chiefClient{cc}
 }
 
-func (c *chiefClient) OnMessageReceived(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Request, error) {
-	out := new(Request)
+func (c *chiefClient) OnMessageReceived(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
 	err := c.cc.Invoke(ctx, "/api.Chief/OnMessageReceived", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (c *chiefClient) OnMessageReceived(ctx context.Context, in *Request, opts .
 // All implementations must embed UnimplementedChiefServer
 // for forward compatibility
 type ChiefServer interface {
-	OnMessageReceived(context.Context, *Request) (*Request, error)
+	OnMessageReceived(context.Context, *Request) (*Reply, error)
 	mustEmbedUnimplementedChiefServer()
 }
 
@@ -54,7 +54,7 @@ type ChiefServer interface {
 type UnimplementedChiefServer struct {
 }
 
-func (UnimplementedChiefServer) OnMessageReceived(context.Context, *Request) (*Request, error) {
+func (UnimplementedChiefServer) OnMessageReceived(context.Context, *Request) (*Reply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method OnMessageReceived not implemented")
 }
 func (UnimplementedChiefServer) mustEmbedUnimplementedChiefServer() {}

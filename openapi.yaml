@@ -24,7 +24,7 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Reply'
-    /chief/image:
+    /chief:
         post:
             tags:
                 - Chief
@@ -41,7 +41,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: '#/components/schemas/Request'
+                                $ref: '#/components/schemas/Reply'
     /sys:
         post:
             tags:

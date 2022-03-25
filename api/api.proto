@@ -7,9 +7,9 @@ option go_package = "github.com/mars-projects/mars/api;api";
 
 
 service Chief {
-  rpc OnMessageReceived(Request) returns (Request){
+  rpc OnMessageReceived(Request) returns (Reply){
     option (google.api.http) = {
-      post: "/chief/image",
+      post: "/chief",
       body: "*"
     };
   }
