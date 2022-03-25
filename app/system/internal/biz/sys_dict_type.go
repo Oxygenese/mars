@@ -6,7 +6,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	cDto "github.com/mars-projects/mars/lib/dto"
+	cDto "github.com/mars-projects/mars/common/dto"
 	"gorm.io/gorm"
 )
 

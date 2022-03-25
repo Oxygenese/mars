@@ -23,3 +23,8 @@ docker:
 push:
 	docker push potatozgh/system:$(VERSION)
 	docker rmi potatozgh/system:$(VERSION)
+.PHONY: register
+register:
+	make build
+	make docker
+	make push

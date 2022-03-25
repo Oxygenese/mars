@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	cDto "github.com/mars-projects/mars/lib/dto"
+	cDto "github.com/mars-projects/mars/common/dto"
 	"gorm.io/gorm"
 )
 
@@ -32,7 +32,7 @@ func (e *SysConfig) GetPage(c *dto.SysConfigGetPageReq, list *[]models.SysConfig
 
 // Get 获取SysConfig对象
 func (e *SysConfig) Get(d *dto.SysConfigGetReq, model *models.SysConfig) error {
-	err := e.orm.First(model, d.GetId()).Error
+	err := e.orm.First(&model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
 		e.log.Errorf("Service GetSysConfigPage error:%s", err)

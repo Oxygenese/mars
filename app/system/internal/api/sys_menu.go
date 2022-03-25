@@ -7,8 +7,8 @@ import (
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/api"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/common/api"
+	"github.com/mars-projects/mars/common/middleware/authentication"
 )
 
 type SysMenuHandler struct {
@@ -95,7 +95,7 @@ func (e SysMenuHandler) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
-	req.SetCreateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 	err = e.menuBiz.Insert(&req).Error
 	if err != nil {
 		e.ErrorResult(500, err, "创建失败")
@@ -125,7 +125,7 @@ func (e SysMenuHandler) Update(c *gin.Context) {
 		return
 	}
 
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetUpdateBy(c.GetInt(authentication.UserId))
 	err = e.menuBiz.Update(&req).Error
 	if err != nil {
 		e.ErrorResult(500, err, "更新失败")
@@ -173,14 +173,11 @@ func (e SysMenuHandler) GetMenuRole(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-
 	result, err := e.menuBiz.SetMenuRole("admin")
-
 	if err != nil {
 		e.ErrorResult(500, err, "查询失败")
 		return
 	}
-
 	e.Result(result, "")
 }
 

@@ -2,7 +2,7 @@ package dto
 
 import (
 	"github.com/mars-projects/mars/app/system/internal/models"
-	common "github.com/mars-projects/mars/lib/models"
+	common "github.com/mars-projects/mars/common/models"
 )
 
 // SysDeptGetPageReq 列表或者搜索使用结构体

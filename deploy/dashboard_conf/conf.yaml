@@ -62,7 +62,7 @@ plugins:                          # plugin list (sorted in alphabetical order)
   - basic-auth
   - batch-requests
   - consumer-restriction
-  - cors
+  - cross
   # - dubbo-proxy
   - echo
   # - error-log-logger

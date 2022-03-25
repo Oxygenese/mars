@@ -2,12 +2,14 @@ package oauth2
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"github.com/mars-projects/mars/api/system"
+	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/auth/internal/biz"
+	"github.com/mars-projects/mars/common/transaction"
 	"github.com/mars-projects/oauth2/v4"
 	"github.com/mars-projects/oauth2/v4/manage"
 	"github.com/mars-projects/oauth2/v4/server"
@@ -17,28 +19,60 @@ import (
 
 var ProviderOauth = wire.NewSet(NewManage, NewServer)
 
+type SysUserWithPassword struct {
+	UserId   int64  `json:"userId"`
+	Username string `json:"username"`
+	Password string `json:"password" `
+	NickName string `json:"nickName" `
+	Phone    string `json:"phone"`
+	RoleId   int    `json:"roleId"`
+	Avatar   string `json:"avatar" `
+	Sex      string `json:"sex" `
+	Email    string `json:"email" `
+	DeptId   int    `json:"deptId"`
+	PostId   int    `json:"postId" `
+	Remark   string `json:"remark"`
+	Status   string `json:"status" `
+}
+
 func NewServer(manager *manage.Manager, biz *biz.UserBiz) *server.Server {
 	srv := server.NewDefaultServer(manager)
 	srv.SetAllowGetAccessRequest(true)
 	srv.SetClientInfoHandler(server.ClientFormHandler)
 	srv.SetPasswordAuthorizationHandler(
 		func(username, password string) (userID string, err error) {
-			userInfo, err := biz.FindSysUser(context.Background(), &system.SysUserInfoReq{Username: username})
+			user := SysUserWithPassword{Username: username}
+			fmt.Println("传入用户：", user)
+			marshal, err := json.Marshal(&user)
 			if err != nil {
-				return "", errors.New(401, err.Error(), "请求失败")
+				log.Errorf("[oauth] Marshal SysUserWithPassword err :%s", err)
+				return "", err
 			}
-			fmt.Println(userInfo)
-			err = bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(password))
+			req := &api.Request{
+				Data:      string(marshal),
+				Operation: transaction.FindSysUser,
+			}
+			res, err := biz.FindSysUser(context.Background(), req)
+			if err != nil {
+				log.Errorf("[oauth] FindSysUser failed :%s", err)
+				return "", errors.New(400, "BadRequest", err.Error())
+			}
+			err = json.Unmarshal([]byte(res.Data), &user)
+			if err != nil {
+				log.Errorf("[oauth] Unmarshal SysUserWithPassword err :%s", err)
+				return "", err
+			}
+			err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 			if err != nil {
 				log.Info(err)
 				return "", errors.New(401, "Incorrect Username or Password", "用户名或密码错误")
 			}
 			srv.SetExtensionClaimHandler(
 				func(tgr *oauth2.TokenGenerateRequest) {
-					tgr.ExtensionClaims = userInfo
+					tgr.ExtensionClaims = user
 				},
 			)
-			return strconv.FormatInt(userInfo.UserId, 10), nil
+			return strconv.FormatInt(user.UserId, 10), nil
 		},
 	)
 	return srv

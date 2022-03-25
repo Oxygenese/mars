@@ -10,10 +10,10 @@ server:
 data:
   database:
     driver: mysql
-    source: root:970312@tcp(node3:3306)/mars?parseTime=true&charset=utf8mb4&parseTime=True&loc=Local
-    migrate: true
+    source: root:970312@tcp(node2:3306)/mars?parseTime=true&charset=utf8mb4&parseTime=True&loc=Local
+    migrate: false
   redis:
-    addr: localhost:6379
+    addr: node2:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
     password: "970312"

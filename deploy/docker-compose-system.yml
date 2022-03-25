@@ -16,4 +16,8 @@ services:
 
 networks:
   db_net:
+    driver: overlay
+    attachable: true
   app_net:
+    driver: overlay
+    attachable: true

@@ -3,18 +3,18 @@ package biz
 import (
 	"context"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/mars-projects/mars/api/system"
+	"github.com/mars-projects/mars/api"
 )
 
 type UserBiz struct {
-	client system.SystemClient
+	client api.SystemClient
 	log    *log.Helper
 }
 
-func NewUserBiz(client system.SystemClient, logger log.Logger) *UserBiz {
+func NewUserBiz(client api.SystemClient, logger log.Logger) *UserBiz {
 	return &UserBiz{client: client, log: log.NewHelper(log.With(logger, "modules", "usecase/sys"))}
 }
 
-func (uc UserBiz) FindSysUser(ctx context.Context, in *system.SysUserInfoReq) (*system.SysUserReply, error) {
-	return uc.client.SysUserInfo(ctx, in)
+func (uc UserBiz) FindSysUser(ctx context.Context, in *api.Request) (*api.Reply, error) {
+	return uc.client.OnMessageReceived(ctx, in)
 }

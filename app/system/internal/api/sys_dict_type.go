@@ -7,8 +7,8 @@ import (
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/api"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/common/api"
+	"github.com/mars-projects/mars/common/middleware/authentication"
 )
 
 type SysDictTypeHandler struct {
@@ -96,7 +96,7 @@ func (e SysDictTypeHandler) Insert(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-	req.SetCreateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 	err = e.biz.Insert(&req)
 	if err != nil {
 		e.ErrorResult(500, err, fmt.Sprintf(" 创建字典类型失败，详情：%s", err.Error()))
@@ -124,7 +124,7 @@ func (e SysDictTypeHandler) Update(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetUpdateBy(c.GetInt(authentication.UserId))
 	err = e.biz.Update(&req)
 	if err != nil {
 		return
@@ -149,7 +149,7 @@ func (e SysDictTypeHandler) Delete(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetUpdateBy(c.GetInt(authentication.UserId))
 	err = e.biz.Remove(&req)
 	if err != nil {
 		e.ErrorResult(500, err, err.Error())

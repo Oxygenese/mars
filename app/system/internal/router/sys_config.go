@@ -3,7 +3,6 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mars-projects/mars/app/system/internal/api"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
 )
 
 func init() {
@@ -11,9 +10,9 @@ func init() {
 	routerAuthentication = append(routerAuthentication, registerSysConfigRouter)
 }
 
-func registerSysConfigRouter(r *gin.RouterGroup, option *api.ApiOption, authMiddleware *oauth.Authentication) {
+func registerSysConfigRouter(r *gin.RouterGroup, option *api.ApiOption) {
 	h := option.SysConfigHandler
-	g := r.Group("config").Use(authMiddleware.GinAuthMiddleware())
+	g := r.Group("config")
 	{
 		g.GET("/:id", h.Get)
 		g.PUT("/:id", h.Update)

@@ -2,8 +2,8 @@ package dto
 
 import (
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/dto"
-	common "github.com/mars-projects/mars/lib/models"
+	"github.com/mars-projects/mars/common/dto"
+	common "github.com/mars-projects/mars/common/models"
 )
 
 // SysPostPageReq 列表或者搜索使用结构体

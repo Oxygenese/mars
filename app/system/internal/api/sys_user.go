@@ -9,8 +9,8 @@ import (
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/api"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/common/api"
+	"github.com/mars-projects/mars/common/middleware/authentication"
 	"gorm.io/gorm"
 	"net/http"
 )
@@ -101,7 +101,7 @@ func (e SysUserHandler) Insert(c *gin.Context) {
 		return
 	}
 	// 设置创建人
-	req.SetCreateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 	err = e.biz.Insert(&req)
 	if err != nil {
 		e.ErrorResult(500, err, err.Error())
@@ -130,7 +130,7 @@ func (e SysUserHandler) Update(c *gin.Context) {
 		return
 	}
 
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 
 	err = e.biz.Update(&req)
 	if err != nil {
@@ -157,7 +157,7 @@ func (e SysUserHandler) Delete(c *gin.Context) {
 		return
 	}
 	// 设置编辑人
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 
 	err = e.biz.Remove(&req)
 	if err != nil {
@@ -197,7 +197,8 @@ func (e SysUserHandler) InsetAvatar(c *gin.Context) {
 			return
 		}
 	}
-	req.UserId = oauth.GetUserId(c)
+	req.SetCreateBy(c.GetInt(authentication.UserId))
+
 	req.Avatar = "/" + filPath
 
 	err = e.biz.UpdateAvatar(&req)
@@ -226,7 +227,7 @@ func (e SysUserHandler) UpdateStatus(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 
 	err = e.biz.UpdateStatus(&req)
 	if err != nil {
@@ -255,7 +256,8 @@ func (e SysUserHandler) ResetPwd(c *gin.Context) {
 		return
 	}
 
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetCreateBy(c.GetInt(authentication.UserId))
+
 	err = e.biz.ResetPwd(&req)
 	if err != nil {
 		e.ErrorResult(403, err, err.Error())
@@ -284,7 +286,7 @@ func (e SysUserHandler) UpdatePwd(c *gin.Context) {
 		return
 	}
 	// 数据权限检查
-	err = e.biz.UpdatePwd(oauth.GetUserId(c), req.OldPassword, req.NewPassword)
+	err = e.biz.UpdatePwd(c.GetInt(authentication.UserId), req.OldPassword, req.NewPassword)
 	if err != nil {
 		e.ErrorResult(http.StatusForbidden, err, "密码修改失败")
 		return
@@ -307,7 +309,8 @@ func (e SysUserHandler) GetProfile(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-	req.Id = oauth.GetUserId(c)
+	req.SetCreateBy(c.GetInt(authentication.UserId))
+
 	sysUser := models.SysUser{}
 	roles := make([]models.SysRole, 0)
 	posts := make([]models.SysPost, 0)
@@ -358,7 +361,8 @@ func (e SysUserHandler) GetInfo(c *gin.Context) {
 	mp["permissions"] = permissions
 	mp["buttons"] = buttons
 	sysUser := models.SysUser{}
-	req.Id = oauth.GetUserId(c)
+	req.Id = c.GetInt(authentication.UserId)
+	fmt.Println(req.GetId())
 	err = e.biz.Get(&req, &sysUser)
 	if err != nil {
 		e.ErrorResult(http.StatusUnauthorized, err, "登录失败")

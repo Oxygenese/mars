@@ -25,6 +25,8 @@ services:
 
 networks:
   db_net:
+    driver: overlay
+    attachable: true
 
 volumes:
   rabiitmq_data:

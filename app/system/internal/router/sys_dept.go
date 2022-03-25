@@ -3,16 +3,15 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/mars-projects/mars/app/system/internal/api"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
 )
 
 func init() {
 	routerAuthentication = append(routerAuthentication, registerSysDeptRouter)
 }
 
-func registerSysDeptRouter(r *gin.RouterGroup, option *api.ApiOption, authMiddleware *oauth.Authentication) {
+func registerSysDeptRouter(r *gin.RouterGroup, option *api.ApiOption) {
 	h := option.SysDeptHandler
-	g := r.Group("/dept").Use(authMiddleware.GinAuthMiddleware())
+	g := r.Group("/dept")
 	{
 		g.GET("/page", h.GetPage)
 		g.GET("/:id", h.Get)

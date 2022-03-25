@@ -12,18 +12,23 @@ import (
 	"github.com/mars-projects/mars/app/chief/internal/server"
 	"github.com/mars-projects/mars/app/chief/internal/service"
 	"github.com/mars-projects/mars/app/chief/internal/task"
+	"github.com/mars-projects/mars/common/wire/data"
+	"github.com/mars-projects/mars/common/wire/register"
 	"github.com/mars-projects/mars/common/wire/sender"
 	"github.com/mars-projects/mars/common/wire/transaction"
 	"github.com/mars-projects/mars/conf"
 )
 
 // initApp init kratos application.
-func initApp(*conf.Server, *conf.Data, log.Logger) (*kratos.App, func(), error) {
+func initApp(*conf.Server, *conf.Data, log.Logger, *conf.Registry) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		server.ProviderServerSet,
 		service.ProviderServiceSet,
 		transaction.ProviderTransactionEngineSet,
-		task.ProviderManagerSet,
+		task.ProviderTasksManagerSet,
+		register.ProviderNacosSet,
 		sender.ProviderMessageSenderSet,
+		data.ProviderRedisTokenStoreSet,
+		data.ProviderRedisSet,
 		newApp))
 }

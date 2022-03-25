@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/mars-projects/oauth2/v4"
 )
@@ -14,9 +15,14 @@ func (api *TokenApi) Token(ctx http.Context) error {
 	if err != nil {
 		return err
 	}
+	data := api.server.GetTokenData(ti)
+	d, err := json.Marshal(&data)
+	if err != nil {
+		return err
+	}
 	var res = map[string]interface{}{
 		"code": 200,
-		"data": api.server.GetTokenData(ti),
+		"data": string(d),
 		"msg":  "认证成功",
 	}
 	return ctx.JSON(200, res)
@@ -32,11 +38,10 @@ func (api *TokenApi) Logout(ctx http.Context) error {
 		return err
 	}
 	var res = map[string]interface{}{
-		"code": 200,
-		"msg":  "注销成功",
+		"code":    200,
+		"message": "注销成功",
 	}
-	ctx.JSON(200, res)
-	return nil
+	return ctx.JSON(200, res)
 }
 
 func (api *TokenApi) Authorize(ctx http.Context) error {
@@ -57,9 +62,9 @@ func (api *TokenApi) Confirm(ctx http.Context) error {
 		return err
 	}
 	var res = map[string]interface{}{
-		"code": 200,
-		"data": data,
-		"msg":  "登录成功",
+		"code":    200,
+		"data":    data,
+		"message": "登录成功",
 	}
 	return ctx.JSON(200, res)
 }

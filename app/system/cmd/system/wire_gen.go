@@ -9,33 +9,33 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/mars-projects/mars/app/system/internal/api"
 	"github.com/mars-projects/mars/app/system/internal/biz"
-	"github.com/mars-projects/mars/app/system/internal/router"
 	"github.com/mars-projects/mars/app/system/internal/server"
 	"github.com/mars-projects/mars/app/system/internal/service"
+	"github.com/mars-projects/mars/app/system/internal/task"
+	"github.com/mars-projects/mars/common/wire/data"
+	"github.com/mars-projects/mars/common/wire/register"
+	"github.com/mars-projects/mars/common/wire/sender"
+	"github.com/mars-projects/mars/common/wire/transaction"
 	"github.com/mars-projects/mars/conf"
-	"github.com/mars-projects/mars/lib/wire/data"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
-	"github.com/mars-projects/mars/lib/wire/register"
 )
 
 // Injectors from wire.go:
 
 // initApp init kratos application.
 func initApp(confServer *conf.Server, registry *conf.Registry, confData *conf.Data, auth *conf.Auth, logger log.Logger) (*kratos.App, func(), error) {
+	transactionSender := sender.NewMessageSender()
+	engine := transaction.NewTransactionEngine(transactionSender)
+	db := data.NewGormClient(confData)
+	bizsOption := biz.NewBizsOption(confData, db, logger)
+	tasksManager := task.NewTaskManager(engine, bizsOption)
+	systemService := service.NewSystemService(tasksManager)
 	client, cleanup, err := data.NewRedisClient(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
 	tokenStore := data.NewRedisTokenStore(client)
-	authentication := oauth.NewAuthentication(tokenStore, logger)
-	db := data.NewGormClient(confData)
-	bizsOption := biz.NewBizsOption(confData, db, logger)
-	apiOption := api.NewApiOptions(bizsOption)
-	engine := router.NewGinEngine(authentication, apiOption)
-	httpServer := server.NewHTTPServer(confServer, engine, logger)
-	systemService := service.NewSystemService(bizsOption)
+	httpServer := server.NewHTTPServer(confServer, systemService, tokenStore, logger)
 	grpcServer := server.NewGRPCServer(confServer, systemService, logger)
 	nacosRegistry := register.NewNacosRegistrar(registry)
 	app := newApp(confServer, logger, httpServer, grpcServer, nacosRegistry)

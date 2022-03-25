@@ -11,3 +11,4 @@ require (
 	github.com/mars-projects/oauth2/v4 v4.4.2
 	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70
 )
+replace github.com/mars-projects/mars v1.0.1 => ../../

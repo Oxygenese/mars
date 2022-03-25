@@ -1,6 +1,6 @@
 package models
 
-import models2 "github.com/mars-projects/mars/lib/models"
+import models2 "github.com/mars-projects/mars/common/models"
 
 type SysDictData struct {
 	DictCode  int    `json:"dictCode" gorm:"primaryKey;column:dict_code;autoIncrement;comment:主键编码"`

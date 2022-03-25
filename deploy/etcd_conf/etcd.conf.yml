@@ -26,7 +26,7 @@ data-dir:
 # Path to the dedicated wal directory.
 wal-dir:
 
-# Number of committed transactions to trigger a snapshot to disk.
+# Number of committed transaction to trigger a snapshot to disk.
 snapshot-count: 10000
 
 # Time (in milliseconds) of a heartbeat interval.

@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package api;
+import "google/protobuf/descriptor.proto";
+import "google/api/annotations.proto";
+option go_package = "github.com/mars-projects/mars/api;api";
+
+
+service Chief {
+  rpc OnMessageReceived(Request) returns (Request){
+    option (google.api.http) = {
+      post: "/chief/image",
+      body: "*"
+    };
+  }
+}
+
+/******************************************* UserService ******************************************************/
+service System {
+     rpc OnMessageReceived(Request) returns (Reply){
+          option(google.api.http) = {
+               post: "/sys"
+               body: "*"
+          };
+     };
+}
+
+service Auth {
+  rpc OnMessageReceived(Request) returns (Reply){
+    option(google.api.http) = {
+      post: "/auth"
+      body: "*"
+    };
+  };
+}
+
+
+message Request {
+  string request_id = 1;
+  string data= 2;
+  string operation = 3;
+}
+
+message Reply {
+  uint32 code = 1;
+  string request_id = 2;
+  string data = 3;
+  string message = 4;
+}
+
+

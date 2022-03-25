@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  portainer:
+    image: portainer/portainer:latest
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: false
+    networks:
+      - agent
+    ports:
+      - "9000:9000"
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - "node.role==manager"
+networks:
+  agent:
+    driver: overlay
+    attachable: true

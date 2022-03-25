@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"github.com/go-kratos/kratos/contrib/registry/nacos/v2"
 	"github.com/mars-projects/mars/conf"
 	"os"
 
@@ -30,13 +31,14 @@ func init() {
 	flag.StringVar(&flagconf, "conf", "../../configs", "config path, eg: -conf config.yaml")
 }
 
-func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
+func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server, server *conf.Server, rr *nacos.Registry) *kratos.App {
 	return kratos.New(
 		kratos.ID(id),
-		kratos.Name(Name),
-		kratos.Version(Version),
+		kratos.Name(server.Name),
+		kratos.Version(server.Version),
 		kratos.Metadata(map[string]string{}),
 		kratos.Logger(logger),
+		kratos.Registrar(rr),
 		kratos.Server(
 			hs,
 			gs,
@@ -46,15 +48,7 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace_id", tracing.TraceID(),
-		"span_id", tracing.SpanID(),
-	)
+
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -70,8 +64,20 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
-
-	app, cleanup, err := initApp(bc.Server, bc.Data, logger)
+	var rc conf.Registry
+	if err := c.Scan(&rc); err != nil {
+		panic(err)
+	}
+	logger := log.With(log.NewStdLogger(os.Stdout),
+		"ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", bc.Server.Name,
+		"service.version", bc.Server.Version,
+		"trace_id", tracing.TraceID(),
+		"span_id", tracing.SpanID(),
+	)
+	app, cleanup, err := initApp(bc.Server, bc.Data, logger, &rc)
 	if err != nil {
 		panic(err)
 	}

@@ -1,4 +1,4 @@
-VERSION=v1.0.1-beat
+VERSION=v1.0.1
 
 .PHONY: generate
 # generate

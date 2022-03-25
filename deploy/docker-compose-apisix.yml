@@ -35,7 +35,6 @@ services:
     networks:
       - app_net
       - db_net
-      - proxy_net
     depends_on:
       - etcd
     deploy:
@@ -52,20 +51,18 @@ services:
         target: 9000
         published: 9527
     networks:
-      - proxy_net
       - app_net
       - db_net
     deploy:
       placement:
         max_replicas_per_node: 1
         constraints:
-          - "node.role==task"
+          - "node.role==manager"
   prometheus:
     image: prom/prometheus:v2.25.0
     volumes:
       - ./prometheus_conf/prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
-      - proxy_net
       - app_net
       - db_net
     ports:
@@ -89,7 +86,6 @@ services:
       - ./grafana_conf/dashboards:/var/lib/grafana/dashboards
       - ./grafana_conf/config/grafana.ini:/etc/grafana/grafana.ini
     networks:
-      - proxy_net
       - app_net
       - db_net
 
@@ -98,6 +94,9 @@ volumes:
   apisix_log:
 
 networks:
-  proxy_net:
   app_net:
+    driver: overlay
+    attachable: true
   db_net:
+    driver: overlay
+    attachable: true

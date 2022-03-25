@@ -7,8 +7,8 @@ import (
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/api"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/common/api"
+	"github.com/mars-projects/mars/common/middleware/authentication"
 	"net/http"
 )
 
@@ -108,7 +108,7 @@ func (e SysRoleHandler) Insert(c *gin.Context) {
 	}
 
 	// 设置创建人
-	req.CreateBy = oauth.GetUserId(c)
+	req.CreateBy = c.GetInt(authentication.UserId)
 	if req.Status == "" {
 		req.Status = "2"
 	}
@@ -141,7 +141,7 @@ func (e SysRoleHandler) Update(c *gin.Context) {
 	}
 	//cb := sdk.Runtime.GetCasbinKey(c.Request.Host)
 
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetUpdateBy(c.GetInt(authentication.UserId))
 
 	err = e.biz.Update(&req)
 	if err != nil {
@@ -205,7 +205,7 @@ func (e SysRoleHandler) Update2Status(c *gin.Context) {
 		e.ErrorResult(500, err, fmt.Sprintf("更新角色状态失败，失败原因：%s ", err.Error()))
 		return
 	}
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetUpdateBy(c.GetInt(authentication.UserId))
 	err = e.biz.UpdateStatus(&req)
 	if err != nil {
 		e.ErrorResult(500, err, fmt.Sprintf("更新角色状态失败，失败原因：%s ", err.Error()))
@@ -238,7 +238,7 @@ func (e SysRoleHandler) Update2DataScope(c *gin.Context) {
 		DataScope: req.DataScope,
 		DeptIds:   req.DeptIds,
 	}
-	data.UpdateBy = oauth.GetUserId(c)
+	data.UpdateBy = c.GetInt(authentication.UserId)
 	err = e.biz.UpdateDataScope(&req).Error
 	if err != nil {
 		e.ErrorResult(500, err, fmt.Sprintf("更新角色数据权限失败！错误详情：%s", err.Error()))

@@ -3,11 +3,10 @@ package biz
 import (
 	"errors"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/mars-projects/mars/api/system"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	cDto "github.com/mars-projects/mars/lib/dto"
-	"github.com/mars-projects/mars/lib/utils"
+	cDto "github.com/mars-projects/mars/common/dto"
+	"github.com/mars-projects/mars/common/utils"
 	"gorm.io/gorm"
 )
 
@@ -16,15 +15,15 @@ type SysUser struct {
 	log *log.Helper
 }
 
-func (e *SysUser) FindByUsername(req *system.SysUserInfoReq, reply *system.SysUserReply) error {
-	var data models.SysUser
-	var err error
-	err = e.orm.Model(&data).Debug().
-		Where("username = ?", req.Username).
-		First(reply).
-		Error
-	return err
-}
+//func (e *SysUser) FindByUsername(req *api.SysUserInfoReq, reply *api.SysUserReply) error {
+//	var data models.SysUser
+//	var err error
+//	err = e.orm.Model(&data).Debug().
+//		Where("username = ?", req.Username).
+//		First(reply).
+//		Error
+//	return err
+//}
 
 // GetPage 获取SysUser列表
 func (e *SysUser) GetPage(c *dto.SysUserGetPageReq, list *[]models.SysUser, count *int64) error {
@@ -46,7 +45,6 @@ func (e *SysUser) GetPage(c *dto.SysUserGetPageReq, list *[]models.SysUser, coun
 // Get 获取SysUser对象
 func (e *SysUser) Get(d *dto.SysUserById, model *models.SysUser) error {
 	var data models.SysUser
-
 	err := e.orm.Debug().Model(&data).Debug().
 		First(model, d.GetId()).Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
@@ -85,6 +83,15 @@ func (e *SysUser) Insert(c *dto.SysUserInsertReq) error {
 	return nil
 }
 
+func (e *SysUser) FindSysUser(c *dto.SysUserByUsernameReq, model *models.SysUserWithPassword) error {
+	var err error
+	err = e.orm.Where("username=?", c.Username).Table("sys_user").First(&model).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Update 修改SysUser对象
 func (e *SysUser) Update(c *dto.SysUserUpdateReq) error {
 	var err error
@@ -96,7 +103,6 @@ func (e *SysUser) Update(c *dto.SysUserUpdateReq) error {
 	}
 	if db.RowsAffected == 0 {
 		return errors.New("无权更新该数据")
-
 	}
 	c.Generate(&model)
 	update := e.orm.Model(&model).Where("user_id = ?", &model.UserId).Omit("password", "salt").Updates(&model)

@@ -9,7 +9,7 @@ server:
     timeout: 1s
 data:
   redis:
-    addr: 127.0.0.1:6379
+    addr: node2:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
     password: "970312"

@@ -13,10 +13,10 @@ import (
 	"github.com/mars-projects/mars/app/auth/internal/biz"
 	"github.com/mars-projects/mars/app/auth/internal/oauth2"
 	"github.com/mars-projects/mars/app/auth/internal/server"
+	"github.com/mars-projects/mars/common/wire/client"
+	"github.com/mars-projects/mars/common/wire/data"
+	"github.com/mars-projects/mars/common/wire/register"
 	"github.com/mars-projects/mars/conf"
-	"github.com/mars-projects/mars/lib/wire/client"
-	"github.com/mars-projects/mars/lib/wire/data"
-	"github.com/mars-projects/mars/lib/wire/register"
 )
 
 // initApp init kratos application.

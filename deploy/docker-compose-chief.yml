@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   chief:
-    image: potatozgh/chief:v1.0.1-beat
+    image: potatozgh/chief:v1.0.1
     volumes:
       - ./chief_conf:/data/chief/conf
     depends_on:
@@ -17,4 +17,8 @@ services:
 
 networks:
   db_net:
+    driver: overlay
+    attachable: true
   app_net:
+    driver: overlay
+    attachable: true

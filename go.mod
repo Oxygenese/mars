@@ -18,6 +18,7 @@ require (
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cast v1.4.1
 	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70
+	google.golang.org/genproto v0.0.0-20220307174427-659dce7fcb03
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.2.3
@@ -74,7 +75,6 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20220307174427-659dce7fcb03 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

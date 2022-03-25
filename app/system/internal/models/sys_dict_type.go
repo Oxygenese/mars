@@ -1,7 +1,7 @@
 package models
 
 import (
-	models2 "github.com/mars-projects/mars/lib/models"
+	models2 "github.com/mars-projects/mars/common/models"
 )
 
 type SysDictType struct {

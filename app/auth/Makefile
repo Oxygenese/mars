@@ -24,3 +24,9 @@ docker:
 push:
 	docker push potatozgh/auth:$(VERSION)
 	docker rmi potatozgh/auth:$(VERSION)
+
+.PHONY: register
+register:
+	make build
+	make docker
+	make push

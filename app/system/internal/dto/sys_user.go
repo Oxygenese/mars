@@ -2,8 +2,8 @@ package dto
 
 import (
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/dto"
-	common "github.com/mars-projects/mars/lib/models"
+	"github.com/mars-projects/mars/common/dto"
+	common "github.com/mars-projects/mars/common/models"
 )
 
 type SysUserGetPageReq struct {
@@ -174,6 +174,11 @@ func (s *SysUserById) GetId() interface{} {
 		return s.Ids
 	}
 	return s.Id
+}
+
+type SysUserByUsernameReq struct {
+	Username string `json:"username,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 func (s *SysUserById) GenerateM() (common.ActiveRecord, error) {

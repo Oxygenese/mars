@@ -21,7 +21,7 @@ services:
       placement:
         max_replicas_per_node: 1
         constraints:
-          - "node.role==task"
+          - "node.role==manager"
 
 volumes:
   nacos_data:
@@ -29,4 +29,8 @@ volumes:
 
 networks:
   app_net:
+    driver: overlay
+    attachable: true
   db_net:
+    driver: overlay
+    attachable: true

@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/mars-projects/mars/lib/models"
-	models2 "github.com/mars-projects/mars/lib/models"
+	"github.com/mars-projects/mars/common/models"
+	models2 "github.com/mars-projects/mars/common/models"
 )
 
 type SysDept struct {

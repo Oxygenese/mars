@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-kratos/kratos/contrib/registry/nacos/v2"
-	"github.com/mars-projects/mars/api/system"
+	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/conf"
 
 	"github.com/go-kratos/kratos/v2/transport/grpc"
@@ -14,7 +14,7 @@ import (
 
 var ProviderSysClientSet = wire.NewSet(NewSysClient)
 
-func NewSysClient(r *nacos.Registry, client *conf.Client) (system.SystemClient, error) {
+func NewSysClient(r *nacos.Registry, client *conf.Client) (api.SystemClient, error) {
 	conn, err := grpc.DialInsecure(
 		context.Background(),
 		grpc.WithEndpoint(grpcClientAddr(client.Sys)),
@@ -24,7 +24,7 @@ func NewSysClient(r *nacos.Registry, client *conf.Client) (system.SystemClient, 
 		log.Println(err)
 		panic(err)
 	}
-	return system.NewSystemClient(conn), nil
+	return api.NewSystemClient(conn), nil
 }
 
 func grpcClientAddr(serveName string) string {

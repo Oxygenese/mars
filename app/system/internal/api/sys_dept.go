@@ -6,9 +6,9 @@ import (
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
-	"github.com/mars-projects/mars/lib/api"
-	"github.com/mars-projects/mars/lib/utils"
-	"github.com/mars-projects/mars/lib/wire/middleware/oauth"
+	"github.com/mars-projects/mars/common/api"
+	"github.com/mars-projects/mars/common/middleware/authentication"
+	"github.com/mars-projects/mars/common/utils"
 )
 
 type SysDeptHandler struct {
@@ -97,9 +97,8 @@ func (e SysDeptHandler) Insert(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-
+	req.SetCreateBy(c.GetInt(authentication.UserId))
 	// 设置创建人
-	req.SetCreateBy(oauth.GetUserId(c))
 	err = e.biz.Insert(&req)
 	if err != nil {
 		e.ErrorResult(500, err, "创建失败")
@@ -129,7 +128,7 @@ func (e SysDeptHandler) Update(c *gin.Context) {
 		e.ErrorResult(500, err, err.Error())
 		return
 	}
-	req.SetUpdateBy(oauth.GetUserId(c))
+	req.SetUpdateBy(c.GetInt(authentication.UserId))
 	err = e.biz.Update(&req)
 	if err != nil {
 		e.ErrorResult(500, err, err.Error())

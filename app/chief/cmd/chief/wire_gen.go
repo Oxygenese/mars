@@ -12,6 +12,8 @@ import (
 	"github.com/mars-projects/mars/app/chief/internal/server"
 	"github.com/mars-projects/mars/app/chief/internal/service"
 	"github.com/mars-projects/mars/app/chief/internal/task"
+	"github.com/mars-projects/mars/common/wire/data"
+	"github.com/mars-projects/mars/common/wire/register"
 	"github.com/mars-projects/mars/common/wire/sender"
 	"github.com/mars-projects/mars/common/wire/transaction"
 	"github.com/mars-projects/mars/conf"
@@ -20,17 +22,21 @@ import (
 // Injectors from wire.go:
 
 // initApp init kratos application.
-func initApp(confServer *conf.Server, data *conf.Data, logger log.Logger) (*kratos.App, func(), error) {
-	transactionEngine := transaction.NewTransactionEngine()
-	messageSender := sender.NewMessageSender()
-	taskManager, err := task.NewTaskManager(transactionEngine, messageSender)
+func initApp(confServer *conf.Server, confData *conf.Data, logger log.Logger, registry *conf.Registry) (*kratos.App, func(), error) {
+	client, cleanup, err := data.NewRedisClient(confData, logger)
 	if err != nil {
 		return nil, nil, err
 	}
-	imageService := service.NewImageService(taskManager)
-	httpServer := server.NewHTTPServer(confServer, imageService, logger)
-	grpcServer := server.NewGRPCServer(confServer, imageService, logger)
-	app := newApp(logger, httpServer, grpcServer)
+	tokenStore := data.NewRedisTokenStore(client)
+	frameworkSender := sender.NewMessageSender()
+	transactionEngine := transaction.NewTransactionEngine(frameworkSender)
+	tasksManager := task.NewTaskManager(transactionEngine)
+	chiefService := service.NewChiefService(tasksManager)
+	httpServer := server.NewHTTPServer(confServer, tokenStore, chiefService, logger)
+	grpcServer := server.NewGRPCServer(confServer, chiefService, logger)
+	nacosRegistry := register.NewNacosRegistrar(registry)
+	app := newApp(logger, httpServer, grpcServer, confServer, nacosRegistry)
 	return app, func() {
+		cleanup()
 	}, nil
 }

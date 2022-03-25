@@ -22,6 +22,9 @@ services:
         condition: on-failure
 networks:
   db_net:
+    driver: overlay
+    attachable: true
+
 volumes:
   redis_log:
   redis_data:
