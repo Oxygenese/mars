@@ -40,6 +40,7 @@ func (api *TokenApi) Logout(ctx http.Context) error {
 	var res = map[string]interface{}{
 		"code":    200,
 		"message": "注销成功",
+		"data":    nil,
 	}
 	return ctx.JSON(200, res)
 }

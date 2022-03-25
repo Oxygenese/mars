@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"github.com/mars-projects/mars/api"
@@ -21,11 +22,17 @@ type SystemService struct {
 }
 
 func (s *SystemService) OnMessageReceived(ctx context.Context, req *api.Request) (*api.Reply, error) {
+	var err error
 	msg := &api.Message{
 		Request: req,
 		Context: ctx,
 	}
-	err := s.taskManager.PushMessage(msg)
+	if !s.taskManager.IsExecutorExists(req.Operation) {
+		err = errors.New(404, "Not Found", "NotFound")
+		log.Errorf("[service] PushMessage err :%s", err)
+		return nil, err
+	}
+	err = s.taskManager.PushMessage(msg)
 	if err != nil {
 		log.Errorf("[service] PushMessage err :%s", err)
 		return nil, err

@@ -6,6 +6,7 @@ import (
 	"github.com/mars-projects/mars/common/transaction"
 )
 
+// GetSysMenuRoleExecutor 登录成功后获取菜单路由信息
 type GetSysMenuRoleExecutor struct {
 	menuBiz *biz.SysMenu
 }

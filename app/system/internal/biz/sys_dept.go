@@ -12,7 +12,7 @@ import (
 
 type SysDept struct {
 	orm *gorm.DB
-	log *log.Helper
+	Log *log.Helper
 }
 
 // GetPage 获取SysDept列表
@@ -42,11 +42,11 @@ func (e *SysDept) Get(d *dto.SysDeptGetReq, model *models.SysDept) error {
 	err = db.Error
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = errors.New("查看对象不存在或无权查看")
-		e.log.Errorf("db error:%s", err)
+		e.Log.Errorf("db error:%s", err)
 		return err
 	}
 	if db.Error != nil {
-		e.log.Errorf("db error:%s", err)
+		e.Log.Errorf("db error:%s", err)
 		return err
 	}
 	return nil
@@ -67,7 +67,7 @@ func (e *SysDept) Insert(c *dto.SysDeptInsertReq) error {
 	}()
 	err = tx.Create(&data).Error
 	if err != nil {
-		e.log.Errorf("db error:%s", err)
+		e.Log.Errorf("db error:%s", err)
 		return err
 	}
 	deptPath := utils.IntToString(data.DeptId) + "/"
@@ -81,7 +81,7 @@ func (e *SysDept) Insert(c *dto.SysDeptInsertReq) error {
 	var mp = map[string]string{}
 	mp["dept_path"] = deptPath
 	if err := tx.Model(&data).Update("dept_path", deptPath).Error; err != nil {
-		e.log.Errorf("db error:%s", err)
+		e.Log.Errorf("db error:%s", err)
 		return err
 	}
 	return nil
@@ -113,7 +113,7 @@ func (e *SysDept) Update(c *dto.SysDeptUpdateReq) error {
 	model.DeptPath = deptPath
 	db := tx.Save(&model)
 	if db.Error != nil {
-		e.log.Errorf("UpdateSysDept error:%s", err)
+		e.Log.Errorf("UpdateSysDept error:%s", err)
 		return err
 	}
 	if db.RowsAffected == 0 {
@@ -130,7 +130,7 @@ func (e *SysDept) Remove(d *dto.SysDeptDeleteReq) error {
 	db := e.orm.Model(&data).Delete(&data, d.GetId())
 	if db.Error != nil {
 		err = db.Error
-		e.log.Errorf("Delete error: %s", err)
+		e.Log.Errorf("Delete error: %s", err)
 		return err
 	}
 	if db.RowsAffected == 0 {
@@ -151,7 +151,7 @@ func (e *SysDept) getList(c *dto.SysDeptGetPageReq, list *[]models.SysDept) erro
 		).
 		Find(list).Error
 	if err != nil {
-		e.log.Errorf("db error:%s", err)
+		e.Log.Errorf("db error:%s", err)
 		return err
 	}
 	return nil
@@ -255,7 +255,7 @@ func (e *SysDept) SetDeptLabel() (m []dto.DeptLabel, err error) {
 	list := make([]models.SysDept, 0)
 	err = e.orm.Find(&list).Error
 	if err != nil {
-		e.log.Error("find dept list error, %s", err.Error())
+		e.Log.Error("find dept list error, %s", err.Error())
 		return
 	}
 	m = make([]dto.DeptLabel, 0)

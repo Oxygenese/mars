@@ -12,6 +12,7 @@ type Message struct {
 }
 
 func (e Message) UnMarshal(dto interface{}) error {
+
 	return json.Unmarshal([]byte(e.Data), &dto)
 }
 

@@ -24,7 +24,7 @@ func NewTransactionEngine(queueSize int, sender Sender) (*Engine, error) {
 }
 
 type Executor interface {
-	Execute(request *api.Message, respChan chan *api.Reply, sender Sender) error
+	Execute(message *api.Message, respChan chan *api.Reply, sender Sender) error
 }
 
 type Engine struct {
@@ -33,6 +33,11 @@ type Engine struct {
 	resChan     map[string]chan *api.Reply
 	invokeChan  chan *api.Message
 	exitChan    chan bool
+}
+
+func (engine *Engine) IsExecutorExists(operation string) bool {
+	_, exists := engine.executorMap[operation]
+	return exists
 }
 
 type BaseExecutor struct {
@@ -45,8 +50,7 @@ func (engine *Engine) IsSync(operation string) bool {
 }
 
 func (engine *Engine) RegisterExecutor(operation string, sync bool, executor Executor) error {
-	_, exists := engine.executorMap[operation]
-	if exists {
+	if engine.IsExecutorExists(operation) {
 		return fmt.Errorf("executor already bound with message %08X", operation)
 	}
 	engine.executorMap[operation] = BaseExecutor{

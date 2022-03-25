@@ -1,13 +1,16 @@
 package task
 
 import (
+	"errors"
 	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
 	"github.com/mars-projects/mars/app/system/internal/models"
 	"github.com/mars-projects/mars/common/transaction"
+	"gorm.io/gorm"
 )
 
+// CreateSysUserExecutor 创建用户
 type CreateSysUserExecutor struct {
 }
 
@@ -21,24 +24,154 @@ func (executor *CreateSysUserExecutor) Execute(request *api.Message, respChan ch
 	return nil
 }
 
+type QuerySysUserProfileExecutor struct {
+	*biz.SysUser
+}
+
+func (e QuerySysUserProfileExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.SysUserById{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	req.SetCreateBy(message.GetUserId())
+	sysUser := models.SysUser{}
+	roles := make([]models.SysRole, 0)
+	posts := make([]models.SysPost, 0)
+	err = e.GetProfile(&req, &sysUser, &roles, &posts)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	res := map[string]interface{}{
+		"user":  sysUser,
+		"roles": roles,
+		"posts": posts,
+	}
+	respChan <- api.ReplyOk("个人信息查询成功", message.GetRequestId(), res)
+	return nil
+}
+
+type UpdateSysUserPwdExecutor struct {
+	*biz.SysUser
+}
+
+func (e UpdateSysUserPwdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.ResetSysUserPwdReq{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	req.SetCreateBy(message.GetUserId())
+
+	err = e.ResetPwd(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("密码更新成功", message.GetRequestId(), nil)
+	return nil
+}
+
+type ChangeSysUserStatus struct {
+	*biz.SysUser
+}
+
+func (e ChangeSysUserStatus) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.UpdateSysUserStatusReq{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	req.SetCreateBy(message.GetUserId())
+
+	err = e.UpdateStatus(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("更新用户状态成功", message.GetRequestId(), nil)
+	return nil
+}
+
+type QuerySysUserByIdExecutor struct {
+	*biz.SysUser
+}
+
+func (e QuerySysUserByIdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	var err error
+	var data dto.SysUserById
+	var model models.SysUser
+	err = message.UnMarshal(&data)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	err = e.Get(&data, &model)
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 404)
+		return nil
+	}
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("请求成功", message.GetRequestId(), &model)
+	return nil
+}
+
+// FindSysUserExecutor 查询带密码的用户信息
 type FindSysUserExecutor struct {
 	biz *biz.SysUser
 }
 
-func (f FindSysUserExecutor) Execute(msg *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (f FindSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	var req dto.SysUserByUsernameReq
 	var model models.SysUserWithPassword
-	err = msg.UnMarshal(&req)
-	err = f.biz.FindSysUser(&req, &model)
+	err = message.UnMarshal(&req)
 	if err != nil {
-		respChan <- api.ReplyError(err, msg.GetRequestId(), 400)
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	respChan <- api.ReplyOk("请求成功", msg.GetRequestId(), &model)
+	err = f.biz.FindSysUser(&req, &model)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyOk("请求成功", message.GetRequestId(), &model)
 	return nil
 }
 
+type QuerySysUserPageExecutor struct {
+	*biz.SysUser
+}
+
+func (e QuerySysUserPageExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	req := dto.SysUserGetPageReq{}
+	err := message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+
+	list := make([]models.SysUser, 0)
+	var count int64
+
+	err = e.GetPage(&req, &list, &count)
+
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	respChan <- api.ReplyPage(&list, int(count), req.PageIndex, req.PageSize, message.RequestId)
+	return err
+}
+
+// SysUserInfoExecutor 登录成功后查询用户信息
 type SysUserInfoExecutor struct {
 	biz *biz.SysUser
 }

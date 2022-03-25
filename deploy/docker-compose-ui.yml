@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   ui:
-    image: potatozgh/mars-ui:v1.0.1
+    image: potatozgh/mars-ui:v1.0.2
     ports:
       - protocol: tcp
         published: 80

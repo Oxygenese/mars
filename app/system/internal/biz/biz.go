@@ -49,7 +49,7 @@ func NewSysUserBiz(db *gorm.DB, logger log.Logger) *SysUser {
 	return &SysUser{orm: db, log: log.NewHelper(logger)}
 }
 func NewSysConfigBiz(db *gorm.DB, logger log.Logger) *SysConfig {
-	return &SysConfig{orm: db, log: log.NewHelper(logger)}
+	return &SysConfig{orm: db, Log: log.NewHelper(logger)}
 }
 
 func NewSysDictTypeBiz(db *gorm.DB, logger log.Logger) *SysDictType {
@@ -61,7 +61,7 @@ func NewSysDictDataBiz(db *gorm.DB, logger log.Logger) *SysDictData {
 }
 
 func NewSysDeptBiz(db *gorm.DB, logger log.Logger) *SysDept {
-	return &SysDept{orm: db, log: log.NewHelper(logger)}
+	return &SysDept{orm: db, Log: log.NewHelper(logger)}
 }
 
 func migrate(db *gorm.DB) error {
