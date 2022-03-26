@@ -32,7 +32,7 @@ func (s *ChiefService) OnMessageReceived(ctx context.Context, req *api.Request) 
 		Request: req,
 		Context: ctx,
 	}
-	if !s.taskManager.IsExecutorExists(req.Operation) {
+	if !s.taskManager.IsExecutorExists(req.GetOperate()) {
 		err = errors.New(404, "Not Found", "NotFound")
 		log.Errorf("[service] PushMessage err :%s", err)
 		return nil, err
@@ -42,7 +42,7 @@ func (s *ChiefService) OnMessageReceived(ctx context.Context, req *api.Request) 
 		log.Errorf("[service] PushMessage err :%s", err)
 		return nil, err
 	}
-	if !s.taskManager.IsSync(req.GetOperation()) {
+	if !s.taskManager.IsSync(req.GetOperate()) {
 		res := <-s.taskManager.GetResChan(req.GetRequestId())
 		return res, nil
 	}

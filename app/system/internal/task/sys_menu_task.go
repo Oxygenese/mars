@@ -29,7 +29,7 @@ func (executor QuerySysMenuTreeSelectExecutor) Execute(message *api.Message, res
 			return nil
 		}
 	}
-	res := map[string]interface{}{
+	res := transaction.H{
 		"menus":       result,
 		"checkedKeys": menuIds,
 	}

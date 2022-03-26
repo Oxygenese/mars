@@ -32,7 +32,6 @@ func (e SysRole) AddError(err error) error {
 func (e *SysRole) GetPage(c *dto.SysRoleGetPageReq, list *[]models.SysRole, count *int64) error {
 	var err error
 	var data models.SysRole
-
 	err = e.orm.Model(&data).Preload("SysMenu").
 		Scopes(
 			cDto.MakeCondition(c.GetNeedSearch()),

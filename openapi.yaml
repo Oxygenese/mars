@@ -65,13 +65,14 @@ components:
         Reply:
             type: object
             properties:
+                requestId:
+                    type: string
                 code:
                     type: integer
                     format: uint32
-                requestId:
-                    type: string
                 data:
                     type: string
+                    format: bytes
                 message:
                     type: string
         Request:
@@ -79,10 +80,12 @@ components:
             properties:
                 requestId:
                     type: string
+                operate:
+                    type: integer
+                    format: enum
                 data:
                     type: string
-                operation:
-                    type: string
+                    format: bytes
 tags:
     - name: Auth
     - name: Chief

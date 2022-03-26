@@ -1,6 +1,7 @@
 package task
 
 import (
+	"fmt"
 	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
@@ -63,6 +64,13 @@ type QueryAppConfigExecutor struct {
 
 func (e QueryAppConfigExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
 	req := dto.SysConfigGetToSysAppReq{}
+	fmt.Println("传入的data：", message.Data)
+	err = message.UnMarshal(&req)
+	if err != nil {
+		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
+		return nil
+	}
+	fmt.Println("请求参数", req)
 	req.IsFrontend = 1
 	list := make([]models.SysConfig, 0)
 	err = e.biz.GetWithKeyList(&req, &list)
@@ -70,7 +78,7 @@ func (e QueryAppConfigExecutor) Execute(message *api.Message, respChan chan *api
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	mp := make(map[string]string)
+	mp := make(transaction.H)
 	for i := 0; i < len(list); i++ {
 		key := list[i].ConfigKey
 		if key != "" {
@@ -92,7 +100,7 @@ func (g QuerySysConfigSetExecutor) Execute(message *api.Message, respChan chan *
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	m := make(map[string]interface{}, 0)
+	m := make(transaction.H, 0)
 	for _, v := range req {
 		m[v.ConfigKey] = v.ConfigValue
 	}

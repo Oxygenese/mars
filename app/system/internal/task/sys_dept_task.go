@@ -52,7 +52,7 @@ func (executor QuerySysDeptTreeRoleSelectExecutor) Execute(message *api.Message,
 			return nil
 		}
 	}
-	res := map[string]interface{}{
+	res := transaction.H{
 		"depts":       result,
 		"checkedKeys": menuIds,
 	}

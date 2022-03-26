@@ -47,7 +47,6 @@ func (e *SysUser) Encrypt() (err error) {
 	if e.Password == "" {
 		return
 	}
-
 	var hash []byte
 	if hash, err = bcrypt.GenerateFromPassword([]byte(e.Password), bcrypt.DefaultCost); err != nil {
 		return

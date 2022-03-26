@@ -2,30 +2,35 @@ package api
 
 import (
 	"encoding/json"
+	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"github.com/mars-projects/mars/common/transaction"
 	"github.com/mars-projects/oauth2/v4"
 )
 
 func (api *TokenApi) Token(ctx http.Context) error {
 	gt, tgr, err := api.server.ValidationTokenRequest(ctx.Request())
 	if err != nil {
+		log.Errorf("[auth] ValidationTokenRequest err:%s", err)
 		return err
 	}
 	ti, err := api.server.GetAccessToken(ctx, gt, tgr)
 	if err != nil {
+		log.Errorf("[auth] GetAccessToken err:%s", err)
 		return err
 	}
 	data := api.server.GetTokenData(ti)
 	d, err := json.Marshal(&data)
 	if err != nil {
+		log.Errorf("[auth] marshal token err:%s", data)
 		return err
 	}
-	var res = map[string]interface{}{
+	var res = transaction.H{
 		"code": 200,
-		"data": string(d),
+		"data": d,
 		"msg":  "认证成功",
 	}
-	return ctx.JSON(200, res)
+	return ctx.JSON(200, &res)
 }
 
 func (api *TokenApi) Logout(ctx http.Context) error {
@@ -37,10 +42,10 @@ func (api *TokenApi) Logout(ctx http.Context) error {
 	if err != nil {
 		return err
 	}
-	var res = map[string]interface{}{
+	var res = transaction.H{
 		"code":    200,
 		"message": "注销成功",
-		"data":    nil,
+		"data":    "",
 	}
 	return ctx.JSON(200, res)
 }

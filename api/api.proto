@@ -25,27 +25,67 @@ service System {
      };
 }
 
-service Auth {
-  rpc OnMessageReceived(Request) returns (Reply){
-    option(google.api.http) = {
-      post: "/auth"
-      body: "*"
-    };
-  };
-}
-
 
 message Request {
   string request_id = 1;
-  string data= 2;
-  string operation = 3;
+  Operate operate = 2;
+  bytes data = 3;
 }
 
 message Reply {
-  uint32 code = 1;
-  string request_id = 2;
-  string data = 3;
+  string request_id = 1;
+  uint32 code = 2;
+  bytes data = 3;
   string message = 4;
 }
 
 
+enum Operate {
+  //  系统配置操作选项
+  QueryAppConfig = 0;
+  QuerySysConfigSet   = 1;
+  QuerySysConfigPage  = 2;
+  UpdateSysConfigSet  = 3;
+  UpdateSysConfig     = 4;
+  QuerySysConfigById  = 5;
+  QuerySysConfigByKey = 6;
+  CreateSysConfig     = 7;
+  DeleteSysConfig     = 8;
+  // 用户操作
+  UpdateSysUser       = 10;
+  CreateSysUser       = 11;
+  FindSysUser         = 12;
+  QuerySysUserInfo    = 13;
+  QuerySysUserPage    = 14;
+  QuerySysUserById    = 15;
+  ChangeSysUserStatus = 16;
+  QuerySysUserProfile = 17;
+  UpdateSysUserPwd    = 18;
+  ResetSysUserPwd     = 19;
+  DeleteSysUser       = 20;
+  //  角色操作选项
+  QuerySysMenuRole       = 21;
+  QuerySysRolePage       = 22;
+  QuerySysRoleById       = 23;
+  CreateSysRole          = 24;
+  UpdateSysRole          = 25;
+  ChangeSysRoleStatus    = 26;
+  DeleteSysRole          = 27;
+  UpdateSysRoleDataScope = 28;
+  // 菜单操作选项
+  QuerySysMenuTreeSelect = 41;
+  QuerySysMenuPage       = 42;
+  QuerySysMenuById       = 43;
+  CreateSysMenu          = 44;
+  UpdateSysMenu          = 45;
+  DeleteSysMenu          = 46;
+
+  //  数据字典操作
+  QueryDictDataSelect = 61;
+
+  //  部门操作
+  QuerySysDeptTree           = 81;
+  QuerySysDeptTreeRoleSelect = 82;
+  // 岗位操作
+  QuerySysPostPage = 101;
+}

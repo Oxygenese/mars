@@ -9,13 +9,13 @@ import (
 type SysRoleGetPageReq struct {
 	dto.Pagination `search:"-"`
 	SysRoleOrder
-	RoleId    int    `json:"roleId" search:"type:exact;column:role_id;table:sys_role" comment:"角色编码"`     // 角色编码
-	RoleName  string `json:"roleName" search:"type:exact;column:role_name;table:sys_role" comment:"角色名称"` // 角色名称
-	Status    string `json:"status" search:"type:exact;column:status;table:sys_role" comment:"状态"`        // 状态
-	RoleKey   string `json:"roleKey" search:"type:exact;column:role_key;table:sys_role" comment:"角色代码"`   // 角色代码
-	RoleSort  int    `json:"roleSort" search:"type:exact;column:role_sort;table:sys_role" comment:"角色排序"` // 角色排序
-	Flag      string `json:"flag" search:"type:exact;column:flag;table:sys_role" comment:"标记"`            // 标记
-	Remark    string `json:"remark" search:"type:exact;column:remark;table:sys_role" comment:"备注"`        // 备注
+	RoleId    int    `json:"roleId" search:"type:exact;column:role_id;table:sys_role" comment:"角色编码"`        // 角色编码
+	RoleName  string `json:"roleName" search:"type:contains;column:role_name;table:sys_role" comment:"角色名称"` // 角色名称
+	Status    string `json:"status" search:"type:exact;column:status;table:sys_role" comment:"状态"`           // 状态
+	RoleKey   string `json:"roleKey" search:"type:contains;column:role_key;table:sys_role" comment:"角色代码"`   // 角色代码
+	RoleSort  int    `json:"roleSort" search:"type:exact;column:role_sort;table:sys_role" comment:"角色排序"`    // 角色排序
+	Flag      string `json:"flag" search:"type:exact;column:flag;table:sys_role" comment:"标记"`               // 标记
+	Remark    string `json:"remark" search:"type:exact;column:remark;table:sys_role" comment:"备注"`           // 备注
 	Admin     bool   `json:"admin" search:"type:exact;column:admin;table:sys_role" comment:"是否管理员"`
 	DataScope string `json:"dataScope" search:"type:exact;column:data_scope;table:sys_role" comment:"是否管理员"`
 }

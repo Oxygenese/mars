@@ -16,10 +16,10 @@ func Server() middleware.Middleware {
 				return nil, errors.New(http.StatusBadRequest, "BadRequest", "")
 			}
 			tr.ReplyHeader().Set("Access-Control-Allow-Origin", "*")
-			tr.ReplyHeader().Set("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
-			tr.ReplyHeader().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, PATCH, DELETE")
-			tr.ReplyHeader().Set("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
 			tr.ReplyHeader().Set("Access-Control-Allow-Credentials", "true")
+			tr.ReplyHeader().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE,UPDATE")
+			tr.ReplyHeader().Set("Access-Control-Allow-Headers", "Authorization, Content-Length, X-CSRF-Token, Token,session")
+			tr.ReplyHeader().Set("Cache-Control", "no-cache, no-store, max-age=0, must-revalidate, value")
 			return handler(ctx, req)
 		}
 	}

@@ -24,8 +24,7 @@ func (handler *CaptchaApi) GenerateCaptchaHandler(ctx http.Context) error {
 	marshal, _ := json.Marshal(&data)
 	var res = map[string]interface{}{
 		"code":    200,
-		"data":    string(marshal),
-		"id":      id,
+		"data":    marshal,
 		"message": "captcha",
 	}
 	return ctx.JSON(200, res)

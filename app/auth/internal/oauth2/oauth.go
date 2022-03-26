@@ -9,7 +9,6 @@ import (
 	"github.com/google/wire"
 	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/auth/internal/biz"
-	"github.com/mars-projects/mars/common/transaction"
 	"github.com/mars-projects/oauth2/v4"
 	"github.com/mars-projects/oauth2/v4/manage"
 	"github.com/mars-projects/oauth2/v4/server"
@@ -42,22 +41,22 @@ func NewServer(manager *manage.Manager, biz *biz.UserBiz) *server.Server {
 	srv.SetPasswordAuthorizationHandler(
 		func(username, password string) (userID string, err error) {
 			user := SysUserWithPassword{Username: username}
-			fmt.Println("传入用户：", user)
 			marshal, err := json.Marshal(&user)
 			if err != nil {
 				log.Errorf("[oauth] Marshal SysUserWithPassword err :%s", err)
 				return "", err
 			}
 			req := &api.Request{
-				Data:      string(marshal),
-				Operation: transaction.FindSysUser,
+				Data:    marshal,
+				Operate: api.Operate_FindSysUser,
 			}
 			res, err := biz.FindSysUser(context.Background(), req)
 			if err != nil {
 				log.Errorf("[oauth] FindSysUser failed :%s", err)
 				return "", errors.New(400, "BadRequest", err.Error())
 			}
-			err = json.Unmarshal([]byte(res.Data), &user)
+			err = json.Unmarshal(res.Data, &user)
+			fmt.Printf("[oauth] get user :%v\n", user)
 			if err != nil {
 				log.Errorf("[oauth] Unmarshal SysUserWithPassword err :%s", err)
 				return "", err

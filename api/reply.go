@@ -6,18 +6,17 @@ import (
 
 func ReplyOk(message, reqId string, data interface{}) *Reply {
 	res := &Reply{}
-	if data != nil {
-		marshal, err := json.Marshal(&data)
-		if err != nil {
-			res.Code = 400
-			res.Message = err.Error()
-			res.RequestId = reqId
-		}
-		res.Data = string(marshal)
-	}
 	res.RequestId = reqId
 	res.Code = 200
 	res.Message = message
+	switch data.(type) {
+	case []byte:
+		res.Data = data.([]byte)
+	case string:
+		res.Data = []byte(data.(string))
+	default:
+		res.Data, _ = json.Marshal(&data)
+	}
 	return res
 }
 

@@ -22,7 +22,6 @@ func (executor QuerySysRolePageExecutor) Execute(message *api.Message, respChan 
 	}
 	list := make([]models.SysRole, 0)
 	var count int64
-
 	err = executor.GetPage(&req, &list, &count)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)

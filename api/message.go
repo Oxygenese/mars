@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/mars-projects/mars/common/utils"
 )
 
@@ -11,9 +12,9 @@ type Message struct {
 	context.Context
 }
 
-func (e Message) UnMarshal(dto interface{}) error {
-
-	return json.Unmarshal([]byte(e.Data), &dto)
+func (e *Message) UnMarshal(data interface{}) error {
+	fmt.Println(e.GetData())
+	return json.Unmarshal(e.Data, data)
 }
 
 func (e Message) getStringFromContext(key string) string {

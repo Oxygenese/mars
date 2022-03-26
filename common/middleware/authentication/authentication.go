@@ -7,7 +7,6 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/mars-projects/mars/api"
-	"github.com/mars-projects/mars/common/transaction"
 	"github.com/mars-projects/oauth2/v4"
 	"net/http"
 	"strings"
@@ -34,7 +33,7 @@ func Server(store oauth2.TokenStore, logger log.Logger) middleware.Middleware {
 			switch req.(type) {
 			case *api.Request:
 				msg := req.(*api.Request)
-				if msg.Operation == transaction.QueryAppConfig {
+				if msg.Operate == 0 {
 					return handler(ctx, msg)
 				}
 			default:

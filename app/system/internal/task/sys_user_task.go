@@ -2,6 +2,7 @@ package task
 
 import (
 	"errors"
+	"fmt"
 	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
@@ -117,7 +118,7 @@ func (e QuerySysUserProfileExecutor) Execute(message *api.Message, respChan chan
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	res := map[string]interface{}{
+	res := transaction.H{
 		"user":  sysUser,
 		"roles": roles,
 		"posts": posts,
@@ -215,7 +216,8 @@ func (f FindSysUserExecutor) Execute(message *api.Message, respChan chan *api.Re
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	respChan <- api.ReplyOk("请求成功", message.GetRequestId(), &model)
+	fmt.Printf("[FindSysUserExecutor] get user:%v\n", model)
+	respChan <- api.ReplyOk("", message.GetRequestId(), &model)
 	return nil
 }
 
@@ -258,7 +260,7 @@ func (s SysUserInfoExecutor) Execute(message *api.Message, respChan chan *api.Re
 	var buttons = make([]string, 1)
 	buttons[0] = "*:*:*"
 	roles[0] = "admin"
-	var mp = make(map[string]interface{})
+	var mp = make(transaction.H)
 	mp["roles"] = roles
 	mp["permissions"] = permissions
 	mp["buttons"] = buttons
