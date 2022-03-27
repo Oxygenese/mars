@@ -31,6 +31,6 @@ func NewHTTPServer(c *conf.Server, store oauth2.TokenStore, service *service.Chi
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	api.RegisterChiefHTTPServer(srv, service)
+	api.RegisterCellHTTPServer(srv, service)
 	return srv
 }

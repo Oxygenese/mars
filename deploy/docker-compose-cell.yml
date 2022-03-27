@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  system:
+    image: potatozgh/cell:v1.0.1-beat
+    volumes:
+      - ./cell_conf:/data/cell/conf
+    depends_on:
+      - nacos
+    networks:
+      - db_net
+      - app_net
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+
+networks:
+  db_net:
+    driver: overlay
+    attachable: true
+  app_net:
+    driver: overlay
+    attachable: true

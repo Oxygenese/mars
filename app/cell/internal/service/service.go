@@ -12,13 +12,13 @@ import (
 // ProviderServiceSet is service providers.
 var ProviderServiceSet = wire.NewSet(NewChiefService)
 
-type ChiefService struct {
-	api.UnimplementedChiefServer
+type CellService struct {
+	api.UnimplementedCellServer
 	taskManager *task.TasksManager
 }
 
-func NewChiefService(manager *task.TasksManager) *ChiefService {
-	return &ChiefService{taskManager: manager}
+func NewChiefService(manager *task.TasksManager) *CellService {
+	return &CellService{taskManager: manager}
 }
 
 type Image struct {
@@ -26,7 +26,7 @@ type Image struct {
 	Cap  string
 }
 
-func (s *ChiefService) OnMessageReceived(ctx context.Context, req *api.Request) (*api.Reply, error) {
+func (s *CellService) OnMessageReceived(ctx context.Context, req *api.Request) (*api.Reply, error) {
 	var err error
 	msg := &api.Message{
 		Request: req,
