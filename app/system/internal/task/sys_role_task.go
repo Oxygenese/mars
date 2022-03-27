@@ -9,11 +9,11 @@ import (
 	"github.com/mars-projects/mars/common/transaction"
 )
 
-type QuerySysRolePageExecutor struct {
+type SysRoleExecutor struct {
 	*biz.SysRole
 }
 
-func (executor QuerySysRolePageExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) QuerySysRolePage(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysRoleGetPageReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -31,11 +31,7 @@ func (executor QuerySysRolePageExecutor) Execute(message *api.Message, respChan 
 	return err
 }
 
-type QuerySysRoleByIdExecutor struct {
-	*biz.SysRole
-}
-
-func (executor QuerySysRoleByIdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) QuerySysRoleById(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysRoleGetReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -52,11 +48,7 @@ func (executor QuerySysRoleByIdExecutor) Execute(message *api.Message, respChan 
 	return err
 }
 
-type CreateSysRoleExecutor struct {
-	*biz.SysRole
-}
-
-func (executor CreateSysRoleExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) CreateSysRole(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysRoleInsertReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -77,11 +69,7 @@ func (executor CreateSysRoleExecutor) Execute(message *api.Message, respChan cha
 	return err
 }
 
-type UpdateSysRoleExecutor struct {
-	*biz.SysRole
-}
-
-func (executor UpdateSysRoleExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) UpdateSysRole(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysRoleUpdateReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -89,21 +77,16 @@ func (executor UpdateSysRoleExecutor) Execute(message *api.Message, respChan cha
 		return nil
 	}
 	req.SetUpdateBy(message.GetUserId())
-
 	err = executor.Update(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	respChan <- api.ReplyOk("更新成功", message.GetRequestId(), nil)
-	return err
+	respChan <- api.ReplyOk("更新成功", message.GetRequestId(), "")
+	return nil
 }
 
-type ChangeSysRoleStatusExecutor struct {
-	*biz.SysRole
-}
-
-func (executor ChangeSysRoleStatusExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) ChangeSysRoleStatus(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.UpdateStatusReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -120,11 +103,7 @@ func (executor ChangeSysRoleStatusExecutor) Execute(message *api.Message, respCh
 	return err
 }
 
-type DeleteSysRoleExecutor struct {
-	*biz.SysRole
-}
-
-func (executor DeleteSysRoleExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) DeleteSysRole(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysRoleDeleteReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -140,11 +119,7 @@ func (executor DeleteSysRoleExecutor) Execute(message *api.Message, respChan cha
 	return err
 }
 
-type UpdateSysRoleDataScopeExecutor struct {
-	*biz.SysRole
-}
-
-func (executor UpdateSysRoleDataScopeExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysRoleExecutor) UpdateSysRoleDataScope(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.RoleDataScopeReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {

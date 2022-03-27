@@ -2,7 +2,6 @@ package task
 
 import (
 	"errors"
-	"fmt"
 	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
@@ -11,11 +10,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type UpdateSysUserExecutor struct {
+type SysUserExecutor struct {
 	*biz.SysUser
 }
 
-func (executor UpdateSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) UpdateSysUser(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysUserUpdateReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -32,11 +31,7 @@ func (executor UpdateSysUserExecutor) Execute(message *api.Message, respChan cha
 	return nil
 }
 
-type DeleteSysUserExecutor struct {
-	*biz.SysUser
-}
-
-func (executor DeleteSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) DeleteSysUser(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysUserById{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -54,11 +49,7 @@ func (executor DeleteSysUserExecutor) Execute(message *api.Message, respChan cha
 	return nil
 }
 
-type ResetSysUserPwdExecutor struct {
-	*biz.SysUser
-}
-
-func (executor ResetSysUserPwdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) ResetSysUserPwd(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.ResetSysUserPwdReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -75,12 +66,7 @@ func (executor ResetSysUserPwdExecutor) Execute(message *api.Message, respChan c
 	return nil
 }
 
-// CreateSysUserExecutor 创建用户
-type CreateSysUserExecutor struct {
-	*biz.SysUser
-}
-
-func (executor *CreateSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
+func (executor *SysUserExecutor) CreateSysUser(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
 	req := dto.SysUserInsertReq{}
 	err = message.UnMarshal(&req)
 	if err != nil {
@@ -98,11 +84,7 @@ func (executor *CreateSysUserExecutor) Execute(message *api.Message, respChan ch
 	return
 }
 
-type QuerySysUserProfileExecutor struct {
-	*biz.SysUser
-}
-
-func (e QuerySysUserProfileExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) QuerySysUserProfile(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysUserById{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -113,7 +95,7 @@ func (e QuerySysUserProfileExecutor) Execute(message *api.Message, respChan chan
 	sysUser := models.SysUser{}
 	roles := make([]models.SysRole, 0)
 	posts := make([]models.SysPost, 0)
-	err = e.GetProfile(&req, &sysUser, &roles, &posts)
+	err = executor.GetProfile(&req, &sysUser, &roles, &posts)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -127,11 +109,7 @@ func (e QuerySysUserProfileExecutor) Execute(message *api.Message, respChan chan
 	return nil
 }
 
-type UpdateSysUserPwdExecutor struct {
-	*biz.SysUser
-}
-
-func (e UpdateSysUserPwdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) UpdateSysUserPwd(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.ResetSysUserPwdReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -140,7 +118,7 @@ func (e UpdateSysUserPwdExecutor) Execute(message *api.Message, respChan chan *a
 	}
 	req.SetCreateBy(message.GetUserId())
 
-	err = e.ResetPwd(&req)
+	err = executor.ResetPwd(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -149,11 +127,7 @@ func (e UpdateSysUserPwdExecutor) Execute(message *api.Message, respChan chan *a
 	return nil
 }
 
-type ChangeSysUserStatus struct {
-	*biz.SysUser
-}
-
-func (e ChangeSysUserStatus) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) ChangeSysUserStatus(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.UpdateSysUserStatusReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -162,7 +136,7 @@ func (e ChangeSysUserStatus) Execute(message *api.Message, respChan chan *api.Re
 	}
 	req.SetCreateBy(message.GetUserId())
 
-	err = e.UpdateStatus(&req)
+	err = executor.UpdateStatus(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -171,11 +145,7 @@ func (e ChangeSysUserStatus) Execute(message *api.Message, respChan chan *api.Re
 	return nil
 }
 
-type QuerySysUserByIdExecutor struct {
-	*biz.SysUser
-}
-
-func (e QuerySysUserByIdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) QuerySysUserById(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	var data dto.SysUserById
 	var model models.SysUser
@@ -184,7 +154,7 @@ func (e QuerySysUserByIdExecutor) Execute(message *api.Message, respChan chan *a
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	err = e.Get(&data, &model)
+	err = executor.Get(&data, &model)
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 404)
 		return nil
@@ -197,12 +167,7 @@ func (e QuerySysUserByIdExecutor) Execute(message *api.Message, respChan chan *a
 	return nil
 }
 
-// FindSysUserExecutor 查询带密码的用户信息
-type FindSysUserExecutor struct {
-	biz *biz.SysUser
-}
-
-func (f FindSysUserExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) FindSysUser(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	var req dto.SysUserByUsernameReq
 	var model models.SysUserWithPassword
@@ -211,21 +176,16 @@ func (f FindSysUserExecutor) Execute(message *api.Message, respChan chan *api.Re
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	err = f.biz.FindSysUser(&req, &model)
+	err = executor.GetSysUserByUsername(&req, &model)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	fmt.Printf("[FindSysUserExecutor] get user:%v\n", model)
 	respChan <- api.ReplyOk("", message.GetRequestId(), &model)
 	return nil
 }
 
-type QuerySysUserPageExecutor struct {
-	*biz.SysUser
-}
-
-func (e QuerySysUserPageExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysUserExecutor) QuerySysUserPage(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysUserGetPageReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -236,7 +196,7 @@ func (e QuerySysUserPageExecutor) Execute(message *api.Message, respChan chan *a
 	list := make([]models.SysUser, 0)
 	var count int64
 
-	err = e.GetPage(&req, &list, &count)
+	err = executor.GetPage(&req, &list, &count)
 
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
@@ -246,12 +206,7 @@ func (e QuerySysUserPageExecutor) Execute(message *api.Message, respChan chan *a
 	return err
 }
 
-// SysUserInfoExecutor 登录成功后查询用户信息
-type SysUserInfoExecutor struct {
-	biz *biz.SysUser
-}
-
-func (s SysUserInfoExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
+func (executor *SysUserExecutor) SysUserInfo(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
 	body := dto.SysUserById{}
 	body.Id = message.GetUserId()
 	var roles = make([]string, 1)
@@ -265,7 +220,7 @@ func (s SysUserInfoExecutor) Execute(message *api.Message, respChan chan *api.Re
 	mp["permissions"] = permissions
 	mp["buttons"] = buttons
 	sysUser := models.SysUser{}
-	err = s.biz.Get(&body, &sysUser)
+	err = executor.Get(&body, &sysUser)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil

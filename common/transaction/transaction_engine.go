@@ -25,9 +25,11 @@ func NewTransactionEngine(queueSize int, sender Sender) (*Engine, error) {
 	return &engine, nil
 }
 
-type Executor interface {
-	Execute(message *api.Message, respChan chan *api.Reply, sender Sender) error
-}
+//type Executor interface {
+//	Execute(message *api.Message, respChan chan *api.Reply, sender Sender) error
+//}
+
+type ExecutorFn func(message *api.Message, respChan chan *api.Reply, sender Sender) error
 
 type Engine struct {
 	sender      Sender
@@ -43,7 +45,7 @@ func (engine *Engine) IsExecutorExists(operate api.Operate) bool {
 }
 
 type BaseExecutor struct {
-	Executor
+	ExecutorFn
 	sync bool
 }
 
@@ -51,25 +53,14 @@ func (engine *Engine) IsSync(operation api.Operate) bool {
 	return engine.executorMap[operation].sync
 }
 
-func (engine *Engine) RegisterExecutor(operation api.Operate, sync bool, executor Executor) error {
+func (engine *Engine) RegisterExecutor(operation api.Operate, sync bool, executor ExecutorFn) error {
 	if engine.IsExecutorExists(operation) {
 		return fmt.Errorf("executor already bound with message %08X", operation)
 	}
 	engine.executorMap[operation] = BaseExecutor{
-		Executor: executor,
-		sync:     sync,
+		ExecutorFn: executor,
+		sync:       sync,
 	}
-	return nil
-}
-
-func (engine *Engine) InvokeTask(message *api.Message) error {
-	_, exists := engine.executorMap[message.GetOperate()]
-
-	if !exists {
-		return fmt.Errorf("no executor bound with message %08X", message.GetOperate())
-	}
-
-	engine.invokeChan <- message
 	return nil
 }
 
@@ -106,15 +97,15 @@ func (engine *Engine) routine() {
 				log.Printf("[transaction engin] no executor registered for message [%08X]", msg.GetOperate())
 				break
 			}
-			go executeTask(executor, msg, engine.resChan[msg.GetRequestId()], engine.sender)
+			go executeTask(executor.ExecutorFn, msg, engine.resChan[msg.GetRequestId()], engine.sender)
 			break
 		}
 	}
 	engine.exitChan <- true
 }
 
-func executeTask(executor Executor, msg *api.Message, respChan chan *api.Reply, sender Sender) {
-	err := executor.Execute(msg, respChan, sender)
+func executeTask(executor ExecutorFn, msg *api.Message, respChan chan *api.Reply, sender Sender) {
+	err := executor(msg, respChan, sender)
 	if err != nil {
 		log.Printf("[transaction engin]  execute task(msg: %08X) fail: %s", msg.GetOperate(), err.Error())
 		//err := sender.Send(msg)

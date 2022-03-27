@@ -63,6 +63,7 @@ enum Operate {
   UpdateSysUserPwd    = 18;
   ResetSysUserPwd     = 19;
   DeleteSysUser       = 20;
+  ExportSysUser = 31;
   //  角色操作选项
   QuerySysMenuRole       = 21;
   QuerySysRolePage       = 22;
@@ -80,12 +81,32 @@ enum Operate {
   UpdateSysMenu          = 45;
   DeleteSysMenu          = 46;
 
-  //  数据字典操作
+  //  字典数据操作
   QueryDictDataSelect = 61;
-
+  QueryDictDataByCode = 62;
+  QueryDictDataPage = 63;
+  CreateDictData = 64;
+  UpdateDictData = 65;
+  DeleteDictData = 66;
+  //字典类型操作
+  QueryDictTypePage = 71;
+  QueryDictTypeById = 72;
+  CreateDictType = 73;
+  UpdateDictType = 74;
+  DeleteDictType = 75;
+  ExportDictType = 76;
+  QueryDictTypeOptionSelect = 77;
   //  部门操作
   QuerySysDeptTree           = 81;
   QuerySysDeptTreeRoleSelect = 82;
+  QuerySysDeptById = 83;
+  QuerySysDeptPage = 84;
+  UpdateSysDept = 85;
+  DeleteSysDept = 86;
   // 岗位操作
   QuerySysPostPage = 101;
+  QuerySysPostById = 102;
+  CreateSysPost = 103;
+  UpdateSysPost = 104;
+  DeleteSysPost = 105;
 }

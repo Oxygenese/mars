@@ -9,8 +9,8 @@ import (
 // SysMenuGetPageReq 列表或者搜索使用结构体
 type SysMenuGetPageReq struct {
 	dto.Pagination `search:"-"`
-	Title          string `form:"title" search:"type:contains;column:title;table:sys_menu" comment:"菜单名称"`  // 菜单名称
-	Visible        int    `form:"visible" search:"type:exact;column:visible;table:sys_menu" comment:"显示状态"` // 显示状态
+	Title          string `json:"title" search:"type:contains;column:title;table:sys_menu" comment:"菜单名称"`  // 菜单名称
+	Visible        int    `json:"visible" search:"type:exact;column:visible;table:sys_menu" comment:"显示状态"` // 显示状态
 }
 
 func (m *SysMenuGetPageReq) GetNeedSearch() interface{} {
@@ -18,23 +18,23 @@ func (m *SysMenuGetPageReq) GetNeedSearch() interface{} {
 }
 
 type SysMenuInsertReq struct {
-	MenuId     int    `uri:"id" comment:"编码"`            // 编码
-	MenuName   string `form:"menuName" comment:"菜单name"` //菜单name
-	Title      string `form:"title" comment:"显示名称"`      //显示名称
-	Icon       string `form:"icon" comment:"图标"`         //图标
-	Path       string `form:"path" comment:"路径"`         //路径
-	Paths      string `form:"paths" comment:"id路径"`      //id路径
-	MenuType   string `form:"menuType" comment:"菜单类型"`   //菜单类型
-	Apis       []int  `form:"apis"`
-	Action     string `form:"action" comment:"请求方式"`      //请求方式
-	Permission string `form:"permission" comment:"权限编码"`  //权限编码
-	ParentId   int    `form:"parentId" comment:"上级菜单"`    //上级菜单
-	NoCache    bool   `form:"noCache" comment:"是否缓存"`     //是否缓存
-	Breadcrumb string `form:"breadcrumb" comment:"是否面包屑"` //是否面包屑
-	Component  string `form:"component" comment:"组件"`     //组件
-	Sort       int    `form:"sort" comment:"排序"`          //排序
-	Visible    string `form:"visible" comment:"是否显示"`     //是否显示
-	IsFrame    string `form:"isFrame" comment:"是否frame"`  //是否frame
+	MenuId     int    `json:"id" comment:"编码"`           // 编码
+	MenuName   string `json:"menuName" comment:"菜单name"` //菜单name
+	Title      string `json:"title" comment:"显示名称"`      //显示名称
+	Icon       string `json:"icon" comment:"图标"`         //图标
+	Path       string `json:"path" comment:"路径"`         //路径
+	Paths      string `json:"paths" comment:"id路径"`      //id路径
+	MenuType   string `json:"menuType" comment:"菜单类型"`   //菜单类型
+	Apis       []int  `json:"apis"`
+	Action     string `json:"action" comment:"请求方式"`      //请求方式
+	Permission string `json:"permission" comment:"权限编码"`  //权限编码
+	ParentId   int    `json:"parentId" comment:"上级菜单"`    //上级菜单
+	NoCache    bool   `json:"noCache" comment:"是否缓存"`     //是否缓存
+	Breadcrumb string `json:"breadcrumb" comment:"是否面包屑"` //是否面包屑
+	Component  string `json:"component" comment:"组件"`     //组件
+	Sort       int    `json:"sort" comment:"排序"`          //排序
+	Visible    string `json:"visible" comment:"是否显示"`     //是否显示
+	IsFrame    string `json:"isFrame" comment:"是否frame"`  //是否frame
 	common.ControlBy
 }
 

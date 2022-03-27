@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"go/types"
 )
 
 func ReplyOk(message, reqId string, data interface{}) *Reply {
@@ -14,6 +15,8 @@ func ReplyOk(message, reqId string, data interface{}) *Reply {
 		res.Data = data.([]byte)
 	case string:
 		res.Data = []byte(data.(string))
+	case types.Nil:
+		res.Data = []byte("")
 	default:
 		res.Data, _ = json.Marshal(&data)
 	}
@@ -29,9 +32,9 @@ func ReplyError(err error, requestId string, code uint32) *Reply {
 }
 
 type Page struct {
-	PageIndex int
-	PageSize  int
-	Count     int
+	PageIndex int `json:"pageIndex"`
+	PageSize  int `json:"pageSize"`
+	Count     int `json:"count"`
 }
 
 type page struct {

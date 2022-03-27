@@ -8,12 +8,12 @@ import (
 	"github.com/mars-projects/mars/common/transaction"
 )
 
-type QuerySysMenuTreeSelectExecutor struct {
+type SysMenuExecutor struct {
 	roleBiz *biz.SysRole
 	menuBiz *biz.SysMenu
 }
 
-func (executor QuerySysMenuTreeSelectExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysMenuExecutor) QuerySysMenuTreeSelect(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SelectRole{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -37,13 +37,8 @@ func (executor QuerySysMenuTreeSelectExecutor) Execute(message *api.Message, res
 	return err
 }
 
-// QuerySysMenuRoleExecutor 登录成功后获取菜单路由信息
-type QuerySysMenuRoleExecutor struct {
-	*biz.SysMenu
-}
-
-func (executor QuerySysMenuRoleExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
-	result, err := executor.SetMenuRole("admin")
+func (executor *SysMenuExecutor) QuerySysMenuRole(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+	result, err := executor.menuBiz.SetMenuRole("admin")
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -52,11 +47,7 @@ func (executor QuerySysMenuRoleExecutor) Execute(message *api.Message, respChan 
 	return nil
 }
 
-type QuerySysMenuPageExecutor struct {
-	*biz.SysMenu
-}
-
-func (executor QuerySysMenuPageExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysMenuExecutor) QuerySysMenuPage(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysMenuGetPageReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -64,7 +55,7 @@ func (executor QuerySysMenuPageExecutor) Execute(message *api.Message, respChan 
 		return nil
 	}
 	var list = make([]models.SysMenu, 0)
-	err = executor.GetPage(&req, &list).Error
+	err = executor.menuBiz.GetPage(&req, &list).Error
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -73,11 +64,7 @@ func (executor QuerySysMenuPageExecutor) Execute(message *api.Message, respChan 
 	return nil
 }
 
-type QuerySysMenuByIdExecutor struct {
-	*biz.SysMenu
-}
-
-func (executor QuerySysMenuByIdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysMenuExecutor) QuerySysMenuById(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysMenuGetReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -87,7 +74,7 @@ func (executor QuerySysMenuByIdExecutor) Execute(message *api.Message, respChan 
 
 	var object = models.SysMenu{}
 
-	err = executor.Get(&req, &object).Error
+	err = executor.menuBiz.Get(&req, &object).Error
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -96,11 +83,7 @@ func (executor QuerySysMenuByIdExecutor) Execute(message *api.Message, respChan 
 	return nil
 }
 
-type CreateSysMenuExecutor struct {
-	*biz.SysMenu
-}
-
-func (executor CreateSysMenuExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysMenuExecutor) CreateSysMenu(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysMenuInsertReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -109,7 +92,7 @@ func (executor CreateSysMenuExecutor) Execute(message *api.Message, respChan cha
 	}
 	// 设置创建人
 	req.SetCreateBy(message.GetUserId())
-	err = executor.Insert(&req).Error
+	err = executor.menuBiz.Insert(&req).Error
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -118,11 +101,7 @@ func (executor CreateSysMenuExecutor) Execute(message *api.Message, respChan cha
 	return nil
 }
 
-type UpdateSysMenuExecutor struct {
-	*biz.SysMenu
-}
-
-func (executor UpdateSysMenuExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysMenuExecutor) UpdateSysMenu(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysMenuUpdateReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -130,7 +109,7 @@ func (executor UpdateSysMenuExecutor) Execute(message *api.Message, respChan cha
 		return nil
 	}
 	req.SetCreateBy(message.GetUserId())
-	err = executor.Update(&req).Error
+	err = executor.menuBiz.Update(&req).Error
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -138,12 +117,7 @@ func (executor UpdateSysMenuExecutor) Execute(message *api.Message, respChan cha
 	respChan <- api.ReplyOk("更新成功", message.GetRequestId(), nil)
 	return nil
 }
-
-type DeleteSysMenuExecutor struct {
-	*biz.SysMenu
-}
-
-func (executor DeleteSysMenuExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysMenuExecutor) DeleteSysMenu(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := new(dto.SysMenuDeleteReq)
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -151,7 +125,7 @@ func (executor DeleteSysMenuExecutor) Execute(message *api.Message, respChan cha
 		return nil
 	}
 	req.SetUpdateBy(message.GetUserId())
-	err = executor.Remove(req).Error
+	err = executor.menuBiz.Remove(req).Error
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil

@@ -8,10 +8,10 @@ import (
 
 type SysDictTypeGetPageReq struct {
 	dto.Pagination `search:"-"`
-	DictId         []int  `form:"dictId" search:"type:in;column:dict_id;table:sys_dict_type"`
-	DictName       string `form:"dictName" search:"type:icontains;column:dict_name;table:sys_dict_type"`
-	DictType       string `form:"dictType" search:"type:icontains;column:dict_type;table:sys_dict_type"`
-	Status         int    `form:"status" search:"type:exact;column:status;table:sys_dict_type"`
+	DictId         []int  `json:"dictId" search:"type:in;column:dict_id;table:sys_dict_type"`
+	DictName       string `json:"dictName" search:"type:icontains;column:dict_name;table:sys_dict_type"`
+	DictType       string `json:"dictType" search:"type:icontains;column:dict_type;table:sys_dict_type"`
+	Status         int    `json:"status" search:"type:exact;column:status;table:sys_dict_type"`
 }
 
 type SysDictTypeOrder struct {
@@ -23,7 +23,7 @@ func (m *SysDictTypeGetPageReq) GetNeedSearch() interface{} {
 }
 
 type SysDictTypeInsertReq struct {
-	Id       int    `uri:"id"`
+	Id       int    `json:"id"`
 	DictName string `json:"dictName"`
 	DictType string `json:"dictType"`
 	Status   int    `json:"status"`
@@ -47,7 +47,7 @@ func (s *SysDictTypeInsertReq) GetId() interface{} {
 }
 
 type SysDictTypeUpdateReq struct {
-	Id       int    `uri:"id"`
+	Id       int    `json:"id"`
 	DictName string `json:"dictName"`
 	DictType string `json:"dictType"`
 	Status   int    `json:"status"`
@@ -71,7 +71,7 @@ func (s *SysDictTypeUpdateReq) GetId() interface{} {
 }
 
 type SysDictTypeGetReq struct {
-	Id int `uri:"id"`
+	Id int `json:"id"`
 }
 
 func (s *SysDictTypeGetReq) GetId() interface{} {

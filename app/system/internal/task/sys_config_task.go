@@ -1,7 +1,6 @@
 package task
 
 import (
-	"fmt"
 	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/system/internal/biz"
 	"github.com/mars-projects/mars/app/system/internal/dto"
@@ -9,23 +8,23 @@ import (
 	"github.com/mars-projects/mars/common/transaction"
 )
 
-// QuerySysConfigPageExecutor 查询系统设置分页数据
-type QuerySysConfigPageExecutor struct {
+// SysConfigExecutor 查询系统设置分页数据
+type SysConfigExecutor struct {
 	*biz.SysConfig
 }
 
-func (e QuerySysConfigPageExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) QuerySysConfigPage(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	req := dto.SysConfigGetPageReq{}
 	err = message.UnMarshal(&req)
-	e.Log.Debug("[QuerySysConfigPageExecutor] unmarshal SysConfigGetPageReq :%s", req)
+	executor.Log.Debug("[QuerySysConfigPageExecutor] unmarshal SysConfigGetPageReq :%s", req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
 	list := make([]models.SysConfig, 0)
 	var count int64
-	err = e.GetPage(&req, &list, &count)
+	err = executor.GetPage(&req, &list, &count)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -34,12 +33,7 @@ func (e QuerySysConfigPageExecutor) Execute(message *api.Message, respChan chan 
 	return nil
 }
 
-// CreateSysConfigExecutor 创建配置项
-type CreateSysConfigExecutor struct {
-	*biz.SysConfig
-}
-
-func (e CreateSysConfigExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) CreateSysConfig(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	req := dto.SysConfigControl{}
 	err = message.UnMarshal(&req)
@@ -49,7 +43,7 @@ func (e CreateSysConfigExecutor) Execute(message *api.Message, respChan chan *ap
 	}
 	req.SetCreateBy(message.GetUserId())
 
-	err = e.Insert(&req)
+	err = executor.Insert(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -58,22 +52,16 @@ func (e CreateSysConfigExecutor) Execute(message *api.Message, respChan chan *ap
 	return err
 }
 
-type QueryAppConfigExecutor struct {
-	biz *biz.SysConfig
-}
-
-func (e QueryAppConfigExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
+func (executor *SysConfigExecutor) QueryAppConfig(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) (err error) {
 	req := dto.SysConfigGetToSysAppReq{}
-	fmt.Println("传入的data：", message.Data)
 	err = message.UnMarshal(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	fmt.Println("请求参数", req)
 	req.IsFrontend = 1
 	list := make([]models.SysConfig, 0)
-	err = e.biz.GetWithKeyList(&req, &list)
+	err = executor.GetWithKeyList(&req, &list)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -89,13 +77,9 @@ func (e QueryAppConfigExecutor) Execute(message *api.Message, respChan chan *api
 	return nil
 }
 
-type QuerySysConfigSetExecutor struct {
-	biz *biz.SysConfig
-}
-
-func (g QuerySysConfigSetExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) QuerySysConfigSet(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := make([]dto.GetSetSysConfigReq, 0)
-	err := g.biz.GetForSet(&req)
+	err := executor.GetForSet(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -108,12 +92,7 @@ func (g QuerySysConfigSetExecutor) Execute(message *api.Message, respChan chan *
 	return nil
 }
 
-// UpdateSysConfigSetExecutor 更新系统设置
-type UpdateSysConfigSetExecutor struct {
-	*biz.SysConfig
-}
-
-func (e UpdateSysConfigSetExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) UpdateSysConfigSet(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	req := make([]dto.GetSetSysConfigReq, 0)
 	err = message.UnMarshal(&req)
@@ -121,7 +100,7 @@ func (e UpdateSysConfigSetExecutor) Execute(message *api.Message, respChan chan 
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	err = e.UpdateForSet(&req)
+	err = executor.UpdateForSet(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -130,12 +109,7 @@ func (e UpdateSysConfigSetExecutor) Execute(message *api.Message, respChan chan 
 	return nil
 }
 
-//QuerySysConfigByIdExecutor 根据id查询配置
-type QuerySysConfigByIdExecutor struct {
-	*biz.SysConfig
-}
-
-func (e QuerySysConfigByIdExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) QuerySysConfigById(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysConfigGetReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -143,7 +117,7 @@ func (e QuerySysConfigByIdExecutor) Execute(message *api.Message, respChan chan 
 		return nil
 	}
 	var object models.SysConfig
-	err = e.Get(&req, &object)
+	err = executor.Get(&req, &object)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -152,12 +126,7 @@ func (e QuerySysConfigByIdExecutor) Execute(message *api.Message, respChan chan 
 	return nil
 }
 
-// QuerySysConfigByKeyExecutor 根据字典Key获取字典数据
-type QuerySysConfigByKeyExecutor struct {
-	*biz.SysConfig
-}
-
-func (e QuerySysConfigByKeyExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) QuerySysConfigByKey(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	var err error
 	var req = new(dto.SysConfigByKeyReq)
 	var resp = new(dto.GetSysConfigByKEYForServiceResp)
@@ -166,7 +135,7 @@ func (e QuerySysConfigByKeyExecutor) Execute(message *api.Message, respChan chan
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
 	}
-	err = e.GetWithKey(req, resp)
+	err = executor.GetWithKey(req, resp)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -175,12 +144,7 @@ func (e QuerySysConfigByKeyExecutor) Execute(message *api.Message, respChan chan
 	return nil
 }
 
-// UpdateSysConfigExecutor 更新系统设置
-type UpdateSysConfigExecutor struct {
-	*biz.SysConfig
-}
-
-func (e UpdateSysConfigExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) UpdateSysConfig(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysConfigControl{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -188,7 +152,7 @@ func (e UpdateSysConfigExecutor) Execute(message *api.Message, respChan chan *ap
 		return nil
 	}
 	req.SetUpdateBy(message.GetUserId())
-	err = e.Update(&req)
+	err = executor.Update(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil
@@ -197,11 +161,7 @@ func (e UpdateSysConfigExecutor) Execute(message *api.Message, respChan chan *ap
 	return nil
 }
 
-type DeleteSysConfigExecutor struct {
-	*biz.SysConfig
-}
-
-func (e DeleteSysConfigExecutor) Execute(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
+func (executor *SysConfigExecutor) DeleteSysConfig(message *api.Message, respChan chan *api.Reply, sender transaction.Sender) error {
 	req := dto.SysConfigDeleteReq{}
 	err := message.UnMarshal(&req)
 	if err != nil {
@@ -209,7 +169,7 @@ func (e DeleteSysConfigExecutor) Execute(message *api.Message, respChan chan *ap
 		return nil
 	}
 	req.SetUpdateBy(message.GetUserId())
-	err = e.Remove(&req)
+	err = executor.Remove(&req)
 	if err != nil {
 		respChan <- api.ReplyError(err, message.GetRequestId(), 400)
 		return nil

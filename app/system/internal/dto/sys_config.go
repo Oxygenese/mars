@@ -9,19 +9,19 @@ import (
 // SysConfigGetPageReq 列表或者搜索使用结构体
 type SysConfigGetPageReq struct {
 	dto.Pagination `search:"-"`
-	ConfigName     string `form:"configName" search:"type:contains;column:config_name;table:sys_config"`
-	ConfigKey      string `form:"configKey" search:"type:contains;column:config_key;table:sys_config"`
-	ConfigType     string `form:"configType" search:"type:exact;column:config_type;table:sys_config"`
-	IsFrontend     int    `form:"isFrontend" search:"type:exact;column:is_frontend;table:sys_config"`
+	ConfigName     string `json:"configName" search:"type:contains;column:config_name;table:sys_config"`
+	ConfigKey      string `json:"configKey" search:"type:contains;column:config_key;table:sys_config"`
+	ConfigType     string `json:"configType" search:"type:exact;column:config_type;table:sys_config"`
+	IsFrontend     int    `json:"isFrontend" search:"type:exact;column:is_frontend;table:sys_config"`
 	SysConfigOrder
 }
 
 type SysConfigOrder struct {
-	IdOrder         string `search:"type:order;column:id;table:sys_config" form:"idOrder"`
-	ConfigNameOrder string `search:"type:order;column:config_name;table:sys_config" form:"configNameOrder"`
-	ConfigKeyOrder  string `search:"type:order;column:config_key;table:sys_config" form:"configKeyOrder"`
-	ConfigTypeOrder string `search:"type:order;column:config_type;table:sys_config" form:"configTypeOrder"`
-	CreatedAtOrder  string `search:"type:order;column:created_at;table:sys_config" form:"createdAtOrder"`
+	IdOrder         string `search:"type:order;column:id;table:sys_config" json:"idOrder"`
+	ConfigNameOrder string `search:"type:order;column:config_name;table:sys_config" json:"configNameOrder"`
+	ConfigKeyOrder  string `search:"type:order;column:config_key;table:sys_config" json:"configKeyOrder"`
+	ConfigTypeOrder string `search:"type:order;column:config_type;table:sys_config" json:"configTypeOrder"`
+	CreatedAtOrder  string `search:"type:order;column:created_at;table:sys_config" json:"createdAtOrder"`
 }
 
 func (m *SysConfigGetPageReq) GetNeedSearch() interface{} {
@@ -29,7 +29,7 @@ func (m *SysConfigGetPageReq) GetNeedSearch() interface{} {
 }
 
 type SysConfigGetToSysAppReq struct {
-	IsFrontend int `form:"isFrontend" search:"type:exact;column:is_frontend;table:sys_config"`
+	IsFrontend int `json:"isFrontend" search:"type:exact;column:is_frontend;table:sys_config"`
 }
 
 func (m *SysConfigGetToSysAppReq) GetNeedSearch() interface{} {
@@ -38,9 +38,9 @@ func (m *SysConfigGetToSysAppReq) GetNeedSearch() interface{} {
 
 // SysConfigControl 增、改使用的结构体
 type SysConfigControl struct {
-	Id          int    `uri:"Id" comment:"编码"` // 编码
+	Id          int    `json:"Id" comment:"编码"` // 编码
 	ConfigName  string `json:"configName" comment:""`
-	ConfigKey   string `uri:"configKey" json:"configKey" comment:""`
+	ConfigKey   string `json:"configKey" json:"configKey" comment:""`
 	ConfigValue string `json:"configValue" comment:""`
 	ConfigType  string `json:"configType" comment:""`
 	IsFrontend  int    `json:"isFrontend"`
@@ -82,7 +82,7 @@ type UpdateSetSysConfigReq map[string]string
 
 // SysConfigByKeyReq 根据Key获取配置
 type SysConfigByKeyReq struct {
-	ConfigKey string `uri:"configKey" search:"type:contains;column:config_key;table:sys_config"`
+	ConfigKey string `json:"configKey" search:"type:contains;column:config_key;table:sys_config"`
 }
 
 func (m *SysConfigByKeyReq) GetNeedSearch() interface{} {
@@ -95,7 +95,7 @@ type GetSysConfigByKEYForServiceResp struct {
 }
 
 type SysConfigGetReq struct {
-	Id int `uri:"id"`
+	Id int `json:"id"`
 }
 
 func (s *SysConfigGetReq) GetId() interface{} {

@@ -110,7 +110,6 @@ func (e *SysRole) Update(c *dto.SysRoleUpdateReq) error {
 	var model = models.SysRole{}
 	var mlist = make([]models.SysMenu, 0)
 	tx.Preload("SysMenu").First(&model, c.GetId())
-	tx.Preload("SysApi").Where("menu_id in ?", c.MenuIds).Find(&mlist)
 	err = tx.Model(&model).Association("SysMenu").Delete(model.SysMenu)
 	if err != nil {
 		e.log.Errorf("delete policy error:%s", err)

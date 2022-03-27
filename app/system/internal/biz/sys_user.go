@@ -83,7 +83,7 @@ func (e SysUser) Insert(c *dto.SysUserInsertReq) error {
 	return nil
 }
 
-func (e *SysUser) FindSysUser(c *dto.SysUserByUsernameReq, model *models.SysUserWithPassword) error {
+func (e *SysUser) GetSysUserByUsername(c *dto.SysUserByUsernameReq, model *models.SysUserWithPassword) error {
 	var err error
 	err = e.orm.Where("username=?", c.Username).Table("sys_user").First(&model).Error
 	if err != nil {

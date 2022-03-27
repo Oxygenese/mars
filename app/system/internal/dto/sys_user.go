@@ -8,28 +8,28 @@ import (
 
 type SysUserGetPageReq struct {
 	dto.Pagination `search:"-"`
-	UserId         int    `form:"userId" search:"type:exact;column:user_id;table:sys_user" comment:"用户ID"`
-	Username       string `form:"username" search:"type:contains;column:username;table:sys_user" comment:"用户名"`
-	NickName       string `form:"nickName" search:"type:contains;column:nick_name;table:sys_user" comment:"昵称"`
-	Phone          string `form:"phone" search:"type:contains;column:phone;table:sys_user" comment:"手机号"`
-	RoleId         string `form:"roleId" search:"type:exact;column:role_id;table:sys_user" comment:"角色ID"`
-	Sex            string `form:"sex" search:"type:exact;column:sex;table:sys_user" comment:"性别"`
-	Email          string `form:"email" search:"type:contains;column:email;table:sys_user" comment:"邮箱"`
-	PostId         string `form:"postId" search:"type:exact;column:post_id;table:sys_user" comment:"岗位"`
-	Status         string `form:"status" search:"type:exact;column:status;table:sys_user" comment:"状态"`
+	UserId         int    `json:"userId" search:"type:exact;column:user_id;table:sys_user" comment:"用户ID"`
+	Username       string `json:"username" search:"type:contains;column:username;table:sys_user" comment:"用户名"`
+	NickName       string `json:"nickName" search:"type:contains;column:nick_name;table:sys_user" comment:"昵称"`
+	Phone          string `json:"phone" search:"type:contains;column:phone;table:sys_user" comment:"手机号"`
+	RoleId         string `json:"roleId" search:"type:exact;column:role_id;table:sys_user" comment:"角色ID"`
+	Sex            string `json:"sex" search:"type:exact;column:sex;table:sys_user" comment:"性别"`
+	Email          string `json:"email" search:"type:contains;column:email;table:sys_user" comment:"邮箱"`
+	PostId         string `json:"postId" search:"type:exact;column:post_id;table:sys_user" comment:"岗位"`
+	Status         string `json:"status" search:"type:exact;column:status;table:sys_user" comment:"状态"`
 	DeptJoin       `search:"type:left;on:dept_id:dept_id;table:sys_user;join:sys_dept"`
 	SysUserOrder
 }
 
 type SysUserOrder struct {
-	UserIdOrder    string `search:"type:order;column:user_id;table:sys_user" form:"userIdOrder"`
-	UsernameOrder  string `search:"type:order;column:username;table:sys_user" form:"usernameOrder"`
-	StatusOrder    string `search:"type:order;column:status;table:sys_user" form:"statusOrder"`
-	CreatedAtOrder string `search:"type:order;column:created_at;table:sys_user" form:"createdAtOrder"`
+	UserIdOrder    string `search:"type:order;column:user_id;table:sys_user" json:"userIdOrder"`
+	UsernameOrder  string `search:"type:order;column:username;table:sys_user" json:"usernameOrder"`
+	StatusOrder    string `search:"type:order;column:status;table:sys_user" json:"statusOrder"`
+	CreatedAtOrder string `search:"type:order;column:created_at;table:sys_user" json:"createdAtOrder"`
 }
 
 type DeptJoin struct {
-	DeptId string `search:"type:contains;column:dept_path;table:sys_dept" form:"deptId"`
+	DeptId string `search:"type:contains;column:dept_path;table:sys_dept" json:"deptId"`
 }
 
 func (m *SysUserGetPageReq) GetNeedSearch() interface{} {

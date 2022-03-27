@@ -70,7 +70,7 @@ func (s *SysRoleInsertReq) GetId() interface{} {
 }
 
 type SysRoleUpdateReq struct {
-	RoleId    int              `uri:"id" comment:"角色编码"`        // 角色编码
+	RoleId    int              `json:"roleId" comment:"角色编码"`   // 角色编码
 	RoleName  string           `json:"roleName" comment:"角色名称"` // 角色名称
 	Status    string           `json:"status" comment:"状态"`     // 状态
 	RoleKey   string           `json:"roleKey" comment:"角色代码"`  // 角色代码
