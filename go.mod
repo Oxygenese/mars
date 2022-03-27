@@ -1,6 +1,6 @@
 module github.com/mars-projects/mars
 
-go 1.17
+go 1.16
 
 require (
 	github.com/bsm/redislock v0.7.2
