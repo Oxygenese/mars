@@ -51,19 +51,19 @@ func Server(store oauth2.TokenStore, logger log.Logger) middleware.Middleware {
 				header := tr.RequestHeader()
 				token := header.Get(AuthorizationHeader)
 				if !strings.Contains(token, TokenType) {
-					err := errors.New(http.StatusBadRequest, "Invalid Token Type", "请配置正确的Token格式")
+					err := errors.New(6401, "Invalid Token Type", "未登录或登录已过期")
 					logWithCtx(ctx, logger, err)
 					return nil, err
 				}
 				tokenValue := strings.Replace(token, TokenType, "", 1)
 				access, err := store.GetByAccess(ctx, tokenValue)
 				if err != nil {
-					err = errors.New(http.StatusInternalServerError, err.Error(), "内部错误")
+					err = errors.New(6401, "Invalid Token", "未登录或登录已过期")
 					logWithCtx(ctx, logger, err)
 					return nil, err
 				}
 				if access == nil {
-					err = errors.New(http.StatusUnauthorized, UnAuthorized, "请登录")
+					err = errors.New(6401, UnAuthorized, "未登录或登录已过期")
 					logWithCtx(ctx, logger, err)
 					return nil, err
 				}
