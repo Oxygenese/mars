@@ -2,10 +2,6 @@ FROM golang:1.16 AS builder
 
 COPY . /src
 WORKDIR /src
-RUN go env -w GO111MODULE="on"
-RUN go env -w GOPROXY="https://goproxy.cn,direct"
-RUN go install github.com/google/wire/cmd/wire
-RUN make wire
 RUN make build
 
 FROM debian:stable-slim
