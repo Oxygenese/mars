@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/bsm/redislock v0.7.2
 	github.com/bytedance/go-tagexpr/v2 v2.9.2
+	github.com/ceph/go-ceph v0.14.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-kratos/kratos/contrib/registry/nacos/v2 v2.0.0-20220310144244-ac99a5c877c4
 	github.com/go-kratos/kratos/v2 v2.2.0
@@ -48,7 +49,7 @@ require (
 	github.com/henrylee2cn/goutil v0.0.0-20210127050712-89660552f6f8 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
