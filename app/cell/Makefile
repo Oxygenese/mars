@@ -12,7 +12,7 @@ run:
 .PHONY: build
 # build
 build:
-	rm -rf ./bin/ && mkdir -p bin/ && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/ ./...
+	rm -rf ./bin/ && mkdir -p bin/ && CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o ./bin/ ./...
 
 .PHONY: docker
 docker:

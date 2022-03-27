@@ -1,19 +1,19 @@
-FROM golang:1.16 AS builder
+FROM debian:stable-slim AS builder
 
 COPY . /src
 WORKDIR /src
+RUN apt-get update
+RUN apt-get install golang
+RUN apt-get install librados-dev
+RUN apt-get install librbd-dev
 RUN make build
 
 FROM debian:stable-slim
-
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		ca-certificates  \
         netbase \
         && rm -rf /var/lib/apt/lists/ \
-        && apt-get autoremove -y && apt-get autoclean -y \
-        && apt-get install librados-dev \
-        && apt-get install librbd-dev
-
+        && apt-get autoremove -y && apt-get autoclean -y
 COPY --from=builder /src/bin /app
 WORKDIR /app
 VOLUME /etc/ceph
