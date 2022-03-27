@@ -1,0 +1,3 @@
+nacos:
+  address: node1
+  port: 8848

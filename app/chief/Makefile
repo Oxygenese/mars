@@ -25,6 +25,7 @@ push:
 	docker rmi potatozgh/chief:$(VERSION)
 .PHONY: register
 register:
+	make wire
 	make build
 	make docker
 	make push

@@ -18,6 +18,92 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
+// CellClient is the client API for Cell service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type CellClient interface {
+	OnMessageReceived(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Reply, error)
+}
+
+type cellClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewCellClient(cc grpc.ClientConnInterface) CellClient {
+	return &cellClient{cc}
+}
+
+func (c *cellClient) OnMessageReceived(ctx context.Context, in *Request, opts ...grpc.CallOption) (*Reply, error) {
+	out := new(Reply)
+	err := c.cc.Invoke(ctx, "/api.Cell/OnMessageReceived", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// CellServer is the server API for Cell service.
+// All implementations must embed UnimplementedCellServer
+// for forward compatibility
+type CellServer interface {
+	OnMessageReceived(context.Context, *Request) (*Reply, error)
+	mustEmbedUnimplementedCellServer()
+}
+
+// UnimplementedCellServer must be embedded to have forward compatible implementations.
+type UnimplementedCellServer struct {
+}
+
+func (UnimplementedCellServer) OnMessageReceived(context.Context, *Request) (*Reply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OnMessageReceived not implemented")
+}
+func (UnimplementedCellServer) mustEmbedUnimplementedCellServer() {}
+
+// UnsafeCellServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to CellServer will
+// result in compilation errors.
+type UnsafeCellServer interface {
+	mustEmbedUnimplementedCellServer()
+}
+
+func RegisterCellServer(s grpc.ServiceRegistrar, srv CellServer) {
+	s.RegisterService(&Cell_ServiceDesc, srv)
+}
+
+func _Cell_OnMessageReceived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Request)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CellServer).OnMessageReceived(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.Cell/OnMessageReceived",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CellServer).OnMessageReceived(ctx, req.(*Request))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Cell_ServiceDesc is the grpc.ServiceDesc for Cell service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Cell_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "api.Cell",
+	HandlerType: (*CellServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "OnMessageReceived",
+			Handler:    _Cell_OnMessageReceived_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "api/api.proto",
+}
+
 // ChiefClient is the client API for Chief service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.

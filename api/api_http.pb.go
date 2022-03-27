@@ -17,16 +17,69 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+type CellHTTPServer interface {
+	OnMessageReceived(context.Context, *Request) (*Reply, error)
+}
+
+func RegisterCellHTTPServer(s *http.Server, srv CellHTTPServer) {
+	r := s.Route("/")
+	r.POST("/cell", _Cell_OnMessageReceived0_HTTP_Handler(srv))
+}
+
+func _Cell_OnMessageReceived0_HTTP_Handler(srv CellHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in Request
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, "/api.Cell/OnMessageReceived")
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.OnMessageReceived(ctx, req.(*Request))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*Reply)
+		return ctx.Result(200, reply)
+	}
+}
+
+type CellHTTPClient interface {
+	OnMessageReceived(ctx context.Context, req *Request, opts ...http.CallOption) (rsp *Reply, err error)
+}
+
+type CellHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewCellHTTPClient(client *http.Client) CellHTTPClient {
+	return &CellHTTPClientImpl{client}
+}
+
+func (c *CellHTTPClientImpl) OnMessageReceived(ctx context.Context, in *Request, opts ...http.CallOption) (*Reply, error) {
+	var out Reply
+	pattern := "/cell"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation("/api.Cell/OnMessageReceived"))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, err
+}
+
 type ChiefHTTPServer interface {
 	OnMessageReceived(context.Context, *Request) (*Reply, error)
 }
 
 func RegisterChiefHTTPServer(s *http.Server, srv ChiefHTTPServer) {
 	r := s.Route("/")
-	r.POST("/chief", _Chief_OnMessageReceived0_HTTP_Handler(srv))
+	r.POST("/cell", _Chief_OnMessageReceived1_HTTP_Handler(srv))
 }
 
-func _Chief_OnMessageReceived0_HTTP_Handler(srv ChiefHTTPServer) func(ctx http.Context) error {
+func _Chief_OnMessageReceived1_HTTP_Handler(srv ChiefHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in Request
 		if err := ctx.Bind(&in); err != nil {
@@ -59,7 +112,7 @@ func NewChiefHTTPClient(client *http.Client) ChiefHTTPClient {
 
 func (c *ChiefHTTPClientImpl) OnMessageReceived(ctx context.Context, in *Request, opts ...http.CallOption) (*Reply, error) {
 	var out Reply
-	pattern := "/chief"
+	pattern := "/cell"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation("/api.Chief/OnMessageReceived"))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -76,10 +129,10 @@ type SystemHTTPServer interface {
 
 func RegisterSystemHTTPServer(s *http.Server, srv SystemHTTPServer) {
 	r := s.Route("/")
-	r.POST("/sys", _System_OnMessageReceived1_HTTP_Handler(srv))
+	r.POST("/sys", _System_OnMessageReceived2_HTTP_Handler(srv))
 }
 
-func _System_OnMessageReceived1_HTTP_Handler(srv SystemHTTPServer) func(ctx http.Context) error {
+func _System_OnMessageReceived2_HTTP_Handler(srv SystemHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in Request
 		if err := ctx.Bind(&in); err != nil {

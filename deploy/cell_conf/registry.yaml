@@ -1,0 +1,3 @@
+nacos:
+  address: nacos
+  port: 8848

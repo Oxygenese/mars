@@ -1,13 +1,13 @@
-VERSION=v1.0.1-beat
+VERSION=v1.0.1
 
 .PHONY: generate
 # generate
 wire:
-	cd cmd/system && wire
+	cd cmd/cell && wire
 
 .PHONY: run
 run:
-	cd cmd/system && go run .
+	cd cmd/cell && go run .
 
 .PHONY: build
 # build
@@ -16,13 +16,13 @@ build:
 
 .PHONY: docker
 docker:
-	docker build . -t potatozgh/system:$(VERSION)
+	docker build . -t potatozgh/cell:$(VERSION)
 	rm -rf ./bin
 
 .PHONY: push
 push:
-	docker push potatozgh/system:$(VERSION)
-	docker rmi potatozgh/system:$(VERSION)
+	docker push potatozgh/cell:$(VERSION)
+	docker rmi potatozgh/cell:$(VERSION)
 .PHONY: register
 register:
 	make wire

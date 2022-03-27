@@ -7,7 +7,6 @@ import "google/protobuf/duration.proto";
 option go_package = "compute-service/internal/conf;conf";
 
 message Bootstrap {
-    Trace trace = 1;
     Server server = 2;
     Data data = 3;
     Auth auth = 4;
@@ -15,14 +14,10 @@ message Bootstrap {
     Queue queue = 6;
 }
 
-message Trace {
-    string endpoint = 1;
-}
-
 message Client {
     string sys = 1;
-    string master = 2;
-    string computer = 3;
+    string chief = 2;
+    string cell = 3;
 }
 
 message Server {
@@ -87,3 +82,4 @@ message Queue {
     Nsq nsq = 1;
     Amqp amqp = 2;
 }
+

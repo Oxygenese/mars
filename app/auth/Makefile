@@ -27,6 +27,7 @@ push:
 
 .PHONY: register
 register:
+	make wire
 	make build
 	make docker
 	make push

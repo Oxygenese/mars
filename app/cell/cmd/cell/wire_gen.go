@@ -9,9 +9,9 @@ package main
 import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/mars-projects/mars/app/chief/internal/server"
-	"github.com/mars-projects/mars/app/chief/internal/service"
-	"github.com/mars-projects/mars/app/chief/internal/task"
+	"github.com/mars-projects/mars/app/cell/internal/server"
+	"github.com/mars-projects/mars/app/cell/internal/service"
+	"github.com/mars-projects/mars/app/cell/internal/task"
 	"github.com/mars-projects/mars/common/wire/data"
 	"github.com/mars-projects/mars/common/wire/register"
 	"github.com/mars-projects/mars/common/wire/sender"

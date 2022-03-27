@@ -5,24 +5,31 @@ import "google/protobuf/descriptor.proto";
 import "google/api/annotations.proto";
 option go_package = "github.com/mars-projects/mars/api;api";
 
-
-service Chief {
+service Cell {
   rpc OnMessageReceived(Request) returns (Reply){
     option (google.api.http) = {
-      post: "/chief",
+      post: "/cell",
       body: "*"
     };
   }
 }
 
-/******************************************* UserService ******************************************************/
+service Chief {
+  rpc OnMessageReceived(Request) returns (Reply){
+    option (google.api.http) = {
+      post: "/cell",
+      body: "*"
+    };
+  }
+}
+
 service System {
-     rpc OnMessageReceived(Request) returns (Reply){
-          option(google.api.http) = {
-               post: "/sys"
-               body: "*"
-          };
-     };
+   rpc OnMessageReceived(Request) returns (Reply){
+      option(google.api.http) = {
+           post: "/sys"
+           body: "*"
+      };
+   };
 }
 
 

@@ -3,7 +3,7 @@ services:
   chief:
     image: potatozgh/chief:v1.0.1
     volumes:
-      - ./chief_conf:/data/chief/conf
+      - ./chief_conf:/data/cell/conf
     depends_on:
       - nacos
       - system

@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY ./bin/ /app
 WORKDIR /app
 RUN ["mkdir","-p","/app/cache/naming"]
-EXPOSE 8003
-EXPOSE 9003
-VOLUME /data/chief/conf
-CMD sleep 10;./chief -conf /data/chief/conf
+EXPOSE 8002
+EXPOSE 9002
+VOLUME /data/cell/conf
+CMD sleep 10;./cell -conf /data/cell/conf
