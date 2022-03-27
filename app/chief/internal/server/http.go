@@ -5,7 +5,7 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/transport/http"
-	"github.com/mars-projects/mars/api/chief"
+	"github.com/mars-projects/mars/api"
 	"github.com/mars-projects/mars/app/chief/internal/service"
 	"github.com/mars-projects/mars/common/middleware/authentication"
 	"github.com/mars-projects/mars/conf"
@@ -31,6 +31,6 @@ func NewHTTPServer(c *conf.Server, store oauth2.TokenStore, service *service.Chi
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	chief.RegisterChiefHTTPServer(srv, service)
+	api.RegisterChiefHTTPServer(srv, service)
 	return srv
 }

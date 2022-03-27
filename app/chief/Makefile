@@ -23,3 +23,8 @@ docker:
 push:
 	docker push potatozgh/chief:$(VERSION)
 	docker rmi potatozgh/chief:$(VERSION)
+.PHONY: register
+register:
+	make build
+	make docker
+	make push
